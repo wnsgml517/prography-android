@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.android.prography.databinding.FragmentDashboardBinding
 
-class DashboardFragment : Fragment() {
+class RandomPhotoFragment : Fragment() {
 
 private var _binding: FragmentDashboardBinding? = null
   // This property is only valid between onCreateView and
@@ -22,7 +22,7 @@ private var _binding: FragmentDashboardBinding? = null
     savedInstanceState: Bundle?
   ): View {
     val dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
+            ViewModelProvider(this).get(RandomPhotoViewModel::class.java)
 
     _binding = FragmentDashboardBinding.inflate(inflater, container, false)
     val root: View = binding.root
