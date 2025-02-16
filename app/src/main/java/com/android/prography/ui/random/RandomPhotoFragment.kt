@@ -1,4 +1,4 @@
-package com.android.prography.ui.dashboard
+package com.android.prography.ui.random
 
 import android.os.Bundle
 import android.view.LayoutInflater

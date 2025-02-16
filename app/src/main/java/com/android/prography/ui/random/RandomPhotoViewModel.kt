@@ -1,4 +1,4 @@
-package com.android.prography.ui.dashboard
+package com.android.prography.ui.random
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
