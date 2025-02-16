@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.android.prography"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.android.prography"
