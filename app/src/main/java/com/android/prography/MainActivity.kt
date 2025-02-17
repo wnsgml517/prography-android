@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         initSetting()
-        initBookMarkBar()
     }
 
     private fun initSetting(){

@@ -4,37 +4,56 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.android.prography.databinding.FragmentDashboardBinding
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.prography.R
+import com.android.prography.databinding.FragmentRandomPhotoBinding
+import kotlinx.coroutines.flow.collectLatest
 
 class RandomPhotoFragment : Fragment() {
 
-private var _binding: FragmentDashboardBinding? = null
-  // This property is only valid between onCreateView and
-  // onDestroyView.
-  private val binding get() = _binding!!
+    private var _binding: FragmentRandomPhotoBinding? = null
+    private val binding get() = _binding!!
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    val dashboardViewModel =
-            ViewModelProvider(this).get(RandomPhotoViewModel::class.java)
+    private val viewModel: RandomPhotoViewModel by viewModels() // ViewModel 설정
 
-    _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-    val root: View = binding.root
 
-    val textView: TextView = binding.textDashboard
-    dashboardViewModel.text.observe(viewLifecycleOwner) {
-      textView.text = it
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentRandomPhotoBinding.inflate(inflater, container, false)
+        return binding.root
     }
-    return root
-  }
+    private lateinit var adapter: RandomPhotoAdapter
 
-override fun onDestroyView() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        adapter = RandomPhotoAdapter()
+        
+        binding.rvRandomView.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = this@RandomPhotoFragment.adapter
+        }
+
+        val itemTouchHelper = ItemTouchHelper(SwipeToDismissCallback(adapter))
+        itemTouchHelper.attachToRecyclerView(binding.rvRandomView)
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.photos.collectLatest { photos ->
+                adapter.submitList(photos)
+            }
+        }
+
+        viewModel.fetchPhotos()
+    }
+
+    override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }

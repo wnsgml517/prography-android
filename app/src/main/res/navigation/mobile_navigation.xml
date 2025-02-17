@@ -13,5 +13,5 @@
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.android.prography.ui.random.RandomPhotoFragment"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_random_photo" />
 </navigation>
