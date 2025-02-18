@@ -1,6 +1,12 @@
+import com.android.utils.TraceUtils.simpleId
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.android)
+
+    kotlin("plugin.serialization") version "2.1.10"
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -40,6 +46,7 @@ android {
 
 dependencies {
 
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -48,6 +55,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+
     implementation(libs.glide)
 
     implementation(libs.retrofit)
@@ -57,9 +65,17 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.coroutines)
     implementation(libs.glide)
-    implementation(libs.moshi)
-    implementation(libs.moshi.kotlin)
-    implementation(libs.retrofit.moshi)
+
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit.serialization)
+    implementation(libs.hilt.android)
+
+    implementation(libs.timber)
+    implementation(libs.androidx.databinding.runtime)
+
+
+    ksp(libs.hilt.compiler)
+    ksp(libs.glide.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
