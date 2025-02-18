@@ -1,4 +1,4 @@
-package com.android.prography.ui.home
+package com.android.prography.presentation.ui.view.home
 
 import android.view.LayoutInflater
 import android.view.View

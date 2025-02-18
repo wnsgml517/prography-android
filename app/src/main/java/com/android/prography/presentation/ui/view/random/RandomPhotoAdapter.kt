@@ -1,4 +1,4 @@
-package com.android.prography.ui.random
+package com.android.prography.presentation.ui.view.random
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -8,14 +8,16 @@ import com.android.prography.data.entity.PhotoResponse
 import com.android.prography.databinding.ItemRandomPhotoBinding
 import com.bumptech.glide.Glide
 
-class RandomPhotoAdapter : ListAdapter<PhotoResponse, RandomPhotoAdapter.PhotoViewHolder>(DIFF_CALLBACK) {
+class RandomPhotoAdapter : ListAdapter<PhotoResponse, RandomPhotoAdapter.PhotoViewHolder>(
+    DIFF_CALLBACK
+) {
 
     class PhotoViewHolder(private val binding: ItemRandomPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(photo: PhotoResponse) {
-            Glide.with(binding.imageView.context)
+            Glide.with(binding.ivBookmarkImage.context)
                 .load(photo.imageUrls.regular)
-                .into(binding.imageView)
+                .into(binding.ivBookmarkImage)
         }
     }
 

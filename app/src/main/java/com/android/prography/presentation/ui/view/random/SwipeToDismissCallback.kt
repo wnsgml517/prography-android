@@ -1,4 +1,4 @@
-package com.android.prography.ui.random
+package com.android.prography.presentation.ui.view.random
 
 import android.graphics.Canvas
 import androidx.recyclerview.widget.ItemTouchHelper

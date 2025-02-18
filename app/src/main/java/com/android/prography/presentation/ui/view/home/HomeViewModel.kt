@@ -1,4 +1,4 @@
-package com.android.prography.ui.home
+package com.android.prography.presentation.ui.view.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

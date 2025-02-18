@@ -7,11 +7,11 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.android.prography.ui.home.HomeFragment"
+        android:name="com.android.prography.presentation.ui.view.home.HomeFragment"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.android.prography.ui.random.RandomPhotoFragment"
+        android:name="com.android.prography.presentation.ui.view.random.RandomPhotoFragment"
         tools:layout="@layout/fragment_random_photo" />
 </navigation>
