@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.android.prography.databinding.FragmentHomeBinding
 import com.android.prography.presentation.ui.base.BaseFragment
+import com.android.prography.presentation.util.SpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -29,21 +30,31 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     }
 
     private fun initRecentImage() {
-        // ✅ Adapter를 먼저 초기화한 후 사용
         recentImageAdapter = RecentImageAdapter()
 
         binding.rvRecentImage.apply {
-            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            setHasFixedSize(true)
+            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
+                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS // ✅ 간격 문제 해결
+            }
             adapter = recentImageAdapter
+
+            // ✅ 수정된 간격 적용 (위/아래/왼쪽/오른쪽 균등)
+            addItemDecoration(SpacingItemDecoration(20))
         }
 
-        // ✅ LiveData observer 먼저 설정 후 fetchPhotos() 호출
+        // ✅ 초기 로딩 시 Shimmer 활성화
+        recentImageAdapter.setLoadingState(true)
+
         viewModel.photos.observe(viewLifecycleOwner) { photos ->
             Timber.i("photo : $photos")
-            recentImageAdapter.submitList(photos)
-        }
 
+            if (photos.isNotEmpty()) {
+                recentImageAdapter.submitList(photos) // ✅ 데이터 로딩 완료 시 Shimmer 제거
+            }
+        }
     }
+
 
     private fun initBookmarkImage() {
         val itemList = listOf(
