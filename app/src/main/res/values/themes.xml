@@ -13,4 +13,12 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
+
+    <style name="Theme.Prography.Title">
+        <item name="android:textSize">20sp</item> <!-- ✅ 글자 크기 -->
+        <item name="android:textColor">@color/black</item> <!-- ✅ 글자 색상 -->
+        <item name="android:letterSpacing">-0.03</item> <!-- ✅ 글자 간격 -->
+        <item name="android:fontFamily">@font/pretendard_bold</item> <!-- ✅ 폰트 -->
+        <item name="android:layout_marginTop">20dp</item> <!-- ✅ 상단 마진 -->
+    </style>
 </resources>

@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor(
     val photos: LiveData<List<RandomPhotoResponse>> = _photos
 
     // 랜덤 사진 읽어올 개수 (5개로 설정)
-    private val _countIdx = MutableLiveData(5) // 초기값 5 설정
+    private val _countIdx = MutableLiveData(10) // 초기값 5 설정
     val countIdx: LiveData<Int> get() = _countIdx
 
     private val accessToken = "QncuXcl9I8DrjBvou0gUTPcBwZIz6ZKSTBglJwv6uXY"
@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
     fun fetchPhotos() {
         Timber.i("checking fetchPhotos")
         viewModelScope.launch(Dispatchers.IO) {
-            getRecentImageUseCase(accessToken, 5).onSuccess {
+            getRecentImageUseCase(accessToken, 10).onSuccess {
                 _photos.postValue(it)
             }.onFailure {
                 baseEvent(Event.ShowToast(it.message.parseErrorMsg()))

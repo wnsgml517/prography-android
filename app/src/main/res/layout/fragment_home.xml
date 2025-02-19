@@ -9,14 +9,12 @@
 
     <TextView
         android:id="@+id/tv_bookmark"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="20dp"
-        android:textAlignment="center"
-        android:textSize="20dp"
+        style="@style/Theme.Prography.Title"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
         android:text="북마크"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,33 +23,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:scrollbars="horizontal"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="15dp"
+        android:scrollbars="none"
+        android:fadeScrollbars="true"
+        android:paddingTop="12dp"
+        android:paddingHorizontal="16dp"
         app:layout_constraintTop_toBottomOf="@+id/tv_bookmark" />
 
     <TextView
         android:id="@+id/tv_recent_image"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="최신 이미지"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="20dp"
+        style="@style/Theme.Prography.Title"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rv_bookmark" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_recent_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:layout_marginTop="15dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_height="0dp"
+        android:fadeScrollbars="true"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:scrollbars="none"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_recent_image" />
 </androidx.constraintlayout.widget.ConstraintLayout>
