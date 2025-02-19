@@ -1,35 +1,38 @@
 package com.android.prography.presentation.ui.view.home
-
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.android.prography.R
+import com.android.prography.data.entity.RandomPhotoResponse
+import com.android.prography.databinding.ItemRecentImageBinding
 import com.bumptech.glide.Glide
 
-class RecentImageAdapter(private val itemList: List<ImageItem>) :
-    RecyclerView.Adapter<RecentImageAdapter.ViewHolder>() {
+class RecentImageAdapter : RecyclerView.Adapter<RecentImageAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: ImageView = view.findViewById(R.id.rv_recent_image)
-        val titleText: TextView = view.findViewById(R.id.tv_recent_title)
-        val subText: TextView = view.findViewById(R.id.tv_sub_text)
+    private var itemList: List<RandomPhotoResponse> = emptyList()
+
+    class ViewHolder(private val binding: ItemRecentImageBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: RandomPhotoResponse) {
+            binding.tvTitle.text = item.title ?: "No Title"  // ✅ `alt_description` 사용
+
+            Glide.with(binding.root.context)
+                .load(item.imageUrls.small)  // ✅ `imageUrls.small`을 로드
+                .into(binding.rvRecentImage)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_recent_image, parent, false)
-        return ViewHolder(view)
+        val binding = ItemRecentImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = itemList[position]
-        holder.titleText.text = item.title
-        holder.subText.text = item.subtitle
-        Glide.with(holder.itemView.context).load(item.imageUrl).into(holder.imageView)
+        holder.bind(itemList[position])
     }
 
     override fun getItemCount(): Int = itemList.size
+
+    fun submitList(newList: List<RandomPhotoResponse>) {
+        itemList = newList
+        notifyDataSetChanged()
+    }
 }
