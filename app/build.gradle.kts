@@ -64,8 +64,10 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
     implementation(libs.coroutines)
+
     implementation(libs.glide)
     implementation(libs.shimmer)
+    implementation(libs.card.stack.view)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.serialization)

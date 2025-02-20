@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.3"
+agp = "8.5.0"
 kotlin = "2.0.21"
 serialization= "1.8.0"
 retrofit-serialization = "0.8.0"
@@ -60,7 +60,7 @@ recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version
 androidx-databinding-runtime = { group = "androidx.databinding", name = "databinding-runtime", version.ref = "databindingRuntime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 retrofit-serialization = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit-serialization" }
-card-stack-view = { module = "com.yuyakaido.android:card-stack-view", version.ref = "cardstackview"}
+card-stack-view = { group = "com.github.yuyakaido", name ="cardstackview", version.ref = "cardstackview"}
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer"}
 
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
