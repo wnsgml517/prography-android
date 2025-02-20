@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -76,12 +77,38 @@ class RandomPhotoFragment : BaseFragment<FragmentRandomPhotoBinding, RandomPhoto
             itemAnimator = DefaultItemAnimator()
         }
 
+        // ✅ 어댑터의 클릭 리스너 설정
+        adapter.setOnNotInterestedClickListener { photo ->
+            // 왼쪽 스와이프
+            swipeCard(Direction.Left)
+        }
+
+
+        adapter.setOnBookmarkClickListener { photo ->
+            // 북마크 저장 후 오른쪽 스와이프
+            viewModel.bookmarkPhoto(photo)
+            swipeCard(Direction.Right)
+        }
+
         viewModel.photos.observe(viewLifecycleOwner) { photos ->
             adapter.submitList(photos)
         }
 
         viewModel.fetchPhotos()
     }
+
+    // ✅ 카드 스와이프 동작 실행
+    private fun swipeCard(direction: Direction) {
+        val setting = SwipeAnimationSetting.Builder()
+            .setDirection(direction)
+            .setDuration(Duration.Normal.duration)
+            .setInterpolator(DecelerateInterpolator())
+            .build()
+
+        layoutManager.setSwipeAnimationSetting(setting)
+        binding.cvRandomView.swipe()
+    }
+
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {
 

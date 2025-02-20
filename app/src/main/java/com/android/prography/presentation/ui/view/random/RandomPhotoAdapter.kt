@@ -9,15 +9,43 @@ import com.android.prography.data.entity.PhotoResponse
 import com.android.prography.databinding.ItemRandomPhotoBinding
 import com.bumptech.glide.Glide
 
-class RandomPhotoAdapter : ListAdapter<PhotoResponse, RandomPhotoAdapter.PhotoViewHolder>(
-    DIFF_CALLBACK
-) {
+class RandomPhotoAdapter :
+    ListAdapter<PhotoResponse, RandomPhotoAdapter.PhotoViewHolder>(DIFF_CALLBACK) {
+
+    private var onNotInterestedClickListener: ((PhotoResponse) -> Unit)? = null
+    private var onInfoClickListener: ((PhotoResponse) -> Unit)? = null
+    private var onBookmarkClickListener: ((PhotoResponse) -> Unit)? = null
+
+    fun setOnNotInterestedClickListener(listener: (PhotoResponse) -> Unit) {
+        onNotInterestedClickListener = listener
+    }
+
+    fun setOnInfoClickListener(listener: (PhotoResponse) -> Unit) {
+        onInfoClickListener = listener
+    }
+
+    fun setOnBookmarkClickListener(listener: (PhotoResponse) -> Unit) {
+        onBookmarkClickListener = listener
+    }
+
     class PhotoViewHolder(private val binding: ItemRandomPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(photo: PhotoResponse) {
+        fun bind(photo: PhotoResponse, onNotInterested: ((PhotoResponse) -> Unit)?,
+                 onInfo: ((PhotoResponse) -> Unit)?, onBookmark: ((PhotoResponse) -> Unit)?) {
+
             Glide.with(binding.ivBookmarkImage.context)
                 .load(photo.imageUrls.regular)
                 .into(binding.ivBookmarkImage)
+
+            binding.ivNotInterestedButton.setOnClickListener {
+                onNotInterested?.invoke(photo)
+            }
+            binding.ivInformationbutton.setOnClickListener {
+                onInfo?.invoke(photo)
+            }
+            binding.ivBookMarkButton.setOnClickListener {
+                onBookmark?.invoke(photo)
+            }
         }
     }
 
@@ -27,7 +55,7 @@ class RandomPhotoAdapter : ListAdapter<PhotoResponse, RandomPhotoAdapter.PhotoVi
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onNotInterestedClickListener, onInfoClickListener, onBookmarkClickListener)
     }
 
     companion object {
