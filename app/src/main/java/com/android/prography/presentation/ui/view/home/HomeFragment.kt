@@ -95,19 +95,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     private fun setItemClickListener() {
         // ✅ 최신 이미지 클릭 시 Detail 화면으로 이동
         recentImageAdapter.setOnItemClickListener { photo ->
-            goToDetailFragment(photo.id, photo.imageUrls.regular)
+            goToDetailFragment(photo.id, photo.imageUrls)
         }
         // ✅ 북마크 클릭 시 Detail 화면으로 이동
         bookmarkImageAdapter.setOnItemClickListener { photo ->
-            goToDetailFragment(photo.id, photo.imageUrls.regular)
+            goToDetailFragment(photo.id, photo.imageUrls)
         }
     }
 
     // ✅ 공통으로 DetailFragment 이동 메서드
-    private fun goToDetailFragment(id: String, imageUrl: String) {
+    private fun goToDetailFragment(id: String, imageUrl: ImageUrls) {
         val action = HomeFragmentDirections.actionNavigationHomeToNavigationDetail(
             id = id,
-            url = imageUrl
+            smallUrl = imageUrl.small,
+            regularUrl = imageUrl.regular
         )
         findNavController().navigate(action)
     }

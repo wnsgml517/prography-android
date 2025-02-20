@@ -2,15 +2,12 @@ package com.android.prography.presentation.ui.view.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.android.prography.data.api.BookmarkPhotoDao
 import com.android.prography.data.entity.BookmarkPhoto
 import com.android.prography.data.entity.ImageUrls
 import com.android.prography.data.entity.PhotoResponse
-import com.android.prography.data.entity.RandomPhotoResponse
-import com.android.prography.domain.usecase.GetRandomImageUseCase
+import com.android.prography.data.entity.RecentPhotoResponse
 import com.android.prography.domain.usecase.GetRecentImageUseCase
 import com.android.prography.presentation.ui.base.BaseViewModel
 import com.android.prography.presentation.ui.ext.parseErrorMsg
@@ -27,8 +24,8 @@ class HomeViewModel @Inject constructor(
     private val bookmarkPhotoDao: BookmarkPhotoDao,
     private val getRecentImageUseCase: GetRecentImageUseCase
 ): BaseViewModel() {
-    private val _photos = MutableLiveData<List<RandomPhotoResponse>>(emptyList())
-    val photos: LiveData<List<RandomPhotoResponse>> = _photos
+    private val _photos = MutableLiveData<List<RecentPhotoResponse>>(emptyList())
+    val photos: LiveData<List<RecentPhotoResponse>> = _photos
 
     // 랜덤 사진 읽어올 개수 (5개로 설정)
     private val _countIdx = MutableLiveData(10) // 초기값 5 설정

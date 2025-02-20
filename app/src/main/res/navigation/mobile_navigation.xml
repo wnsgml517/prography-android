@@ -28,7 +28,10 @@
         android:name="com.android.prography.presentation.ui.view.detail.PhotoDetailFragment"
         tools:layout="@layout/fragment_photo_detail" >
         <argument
-            android:name="url"
+            android:name="smallUrl"
+            app:argType="string"/>
+        <argument
+            android:name="regularUrl"
             app:argType="string"/>
         <argument
             android:name="id"

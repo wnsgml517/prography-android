@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.prography.R
+import com.android.prography.data.entity.ImageUrls
 import com.android.prography.databinding.FragmentRandomPhotoBinding
 import com.android.prography.presentation.ui.base.BaseFragment
 import com.android.prography.presentation.ui.view.home.HomeViewModel
@@ -85,7 +86,7 @@ class RandomPhotoFragment : BaseFragment<FragmentRandomPhotoBinding, RandomPhoto
 
         adapter.setOnInfoClickListener { photo ->
             // 포토 디테일 화면으로 이동
-            goToDetailFragment(photo.id, photo.imageUrls.regular)
+            goToDetailFragment(photo.id, photo.imageUrls)
         }
 
         adapter.setOnBookmarkClickListener { photo ->
@@ -114,10 +115,11 @@ class RandomPhotoFragment : BaseFragment<FragmentRandomPhotoBinding, RandomPhoto
     }
 
     // ✅ 포토 디테일 화면으로 이동
-    private fun goToDetailFragment(id: String, imageUrl: String) {
+    private fun goToDetailFragment(id: String, imageUrl: ImageUrls) {
         val action = RandomPhotoFragmentDirections.actionNavigationRandomToNavigationDetail(
             id = id,
-            url = imageUrl
+            smallUrl = imageUrl.small,
+            regularUrl = imageUrl.regular
         )
         findNavController().navigate(action)
     }

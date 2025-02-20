@@ -118,10 +118,10 @@
             android:textColor="@color/white"
             android:layout_marginBottom="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tv_tag_ilst" />
+            app:layout_constraintBottom_toTopOf="@id/tv_tag_list" />
 
         <TextView
-            android:id="@+id/tv_tag_ilst"
+            android:id="@+id/tv_tag_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/pretendard_medium"
