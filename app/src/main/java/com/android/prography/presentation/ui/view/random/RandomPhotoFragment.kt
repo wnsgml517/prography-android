@@ -83,6 +83,10 @@ class RandomPhotoFragment : BaseFragment<FragmentRandomPhotoBinding, RandomPhoto
             swipeCard(Direction.Left)
         }
 
+        adapter.setOnInfoClickListener { photo ->
+            // 포토 디테일 화면으로 이동
+            goToDetailFragment(photo.id, photo.imageUrls.regular)
+        }
 
         adapter.setOnBookmarkClickListener { photo ->
             // 북마크 저장 후 오른쪽 스와이프
@@ -109,6 +113,14 @@ class RandomPhotoFragment : BaseFragment<FragmentRandomPhotoBinding, RandomPhoto
         binding.cvRandomView.swipe()
     }
 
+    // ✅ 포토 디테일 화면으로 이동
+    private fun goToDetailFragment(id: String, imageUrl: String) {
+        val action = RandomPhotoFragmentDirections.actionNavigationRandomToNavigationDetail(
+            id = id,
+            url = imageUrl
+        )
+        findNavController().navigate(action)
+    }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {
 
