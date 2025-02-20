@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.0"
+agp = "8.7.3"
 kotlin = "2.0.21"
 serialization= "1.8.0"
 retrofit-serialization = "0.8.0"
@@ -30,6 +30,7 @@ recyclerview = "1.4.0"
 databindingRuntime = "8.8.1"
 cardstackview = "2.3.4"
 shimmer ="0.5.0"
+lottie = "6.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,8 +61,10 @@ recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version
 androidx-databinding-runtime = { group = "androidx.databinding", name = "databinding-runtime", version.ref = "databindingRuntime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 retrofit-serialization = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit-serialization" }
+
 card-stack-view = { group = "com.github.yuyakaido", name ="cardstackview", version.ref = "cardstackview"}
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer"}
+lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie"}
 
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }

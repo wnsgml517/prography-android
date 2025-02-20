@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.shimmer)
     implementation(libs.card.stack.view)
+    implementation(libs.lottie)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.serialization)
