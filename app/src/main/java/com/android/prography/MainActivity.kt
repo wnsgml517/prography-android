@@ -1,6 +1,7 @@
 package com.android.prography
 
 import android.os.Bundle
+import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -26,11 +27,23 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+        // 특정 프래그먼트에서 헤더와 네비게이션 뷰를 숨기기
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.navigation_detail) {
+                binding.imgPrographyLogo.visibility = View.GONE
+                binding.viewUnder.visibility = View.GONE
+                binding.navView.visibility = View.GONE
+            } else {
+                binding.imgPrographyLogo.visibility = View.VISIBLE
+                binding.viewUnder.visibility = View.VISIBLE
+                binding.navView.visibility = View.VISIBLE
+            }
+        }
+
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard
+                R.id.navigation_home, R.id.navigation_random, R.id.navigation_detail
             )
         )
 

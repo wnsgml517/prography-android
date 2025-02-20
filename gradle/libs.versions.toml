@@ -14,7 +14,7 @@ material = "1.12.0"
 constraintlayout = "2.2.0"
 lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
-navigationFragmentKtx = "2.8.6"
+navigationFragmentKtx = "2.8.7"
 navigationUiKtx = "2.8.6"
 glide = "4.16.0"
 retrofit = "2.9.0"
@@ -71,3 +71,4 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 hilt-android = { id ="com.google.dagger.hilt.android", version .ref = "hilt"}
+navigation-safeargs = { id ="androidx.navigation.safeargs.kotlin", version .ref = "navigationFragmentKtx"}

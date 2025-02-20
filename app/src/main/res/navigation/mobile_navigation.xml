@@ -8,10 +8,31 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.android.prography.presentation.ui.view.home.HomeFragment"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_detail"
+            app:destination="@id/navigation_detail" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_random"
         android:name="com.android.prography.presentation.ui.view.random.RandomPhotoFragment"
-        tools:layout="@layout/fragment_random_photo" />
+        tools:layout="@layout/fragment_random_photo" >
+        <action
+            android:id="@+id/action_navigation_random_to_navigation_detail"
+            app:destination="@id/navigation_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_detail"
+        android:name="com.android.prography.presentation.ui.view.detail.PhotoDetailFragment"
+        tools:layout="@layout/fragment_photo_detail" >
+        <argument
+            android:name="url"
+            app:argType="string"/>
+        <argument
+            android:name="id"
+            app:argType="string"
+            android:defaultValue='""' />
+    </fragment>
 </navigation>
