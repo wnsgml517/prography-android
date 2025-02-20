@@ -74,11 +74,16 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.androidx.databinding.runtime)
 
+    // room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
 
     ksp(libs.hilt.compiler)
     ksp(libs.glide.compiler)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
+    annotationProcessor(libs.room.compiler)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
