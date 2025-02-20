@@ -9,8 +9,9 @@ class GetRecentImageUseCase @Inject constructor(
 ){
     suspend operator fun invoke(
         accessKey: String,
-        countIdx : Int
+        countIdx : Int,
+        page : Int
     ) : Result<List<RecentPhotoResponse>>{
-        return photoRepository.getRecentPhotos(accessKey, countIdx)
+        return photoRepository.getRecentPhotos(accessKey, countIdx, page)
     }
 }

@@ -25,8 +25,8 @@ class PhotoRepositoryImpl @Inject constructor(private val photoRemoteDataSourceI
             }
         }
     }
-    override suspend fun getRecentPhotos(accessKey: String, countIdx : Int): Result<List<RecentPhotoResponse>> {
-        when (val data = photoRemoteDataSourceImpl.getRecentPhotos(accessKey, countIdx)) {
+    override suspend fun getRecentPhotos(accessKey: String, countIdx : Int, page : Int): Result<List<RecentPhotoResponse>> {
+        when (val data = photoRemoteDataSourceImpl.getRecentPhotos(accessKey, countIdx, page)) {
             is NetworkState.Success -> return Result.success(data.body)
             is NetworkState.Failure -> return Result.failure(
                 RetrofitFailureStateException(data.error, data.code)

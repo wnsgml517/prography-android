@@ -7,6 +7,6 @@ import com.android.prography.domain.util.NetworkState
 
 interface PhotoRemoteDataSource {
     suspend fun getRandomPhotos(accessKey: String, countIdx : Int): NetworkState<List<PhotoResponse>>
-    suspend fun getRecentPhotos(accessKey: String, countIdx : Int): NetworkState<List<RecentPhotoResponse>>
+    suspend fun getRecentPhotos(accessKey: String, countIdx : Int, page : Int): NetworkState<List<RecentPhotoResponse>>
     suspend fun getDetailPhoto(accessKey: String, photoId : String): NetworkState<DetailPhotoResponse>
 }

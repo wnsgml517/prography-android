@@ -19,9 +19,10 @@ class PhotoRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getRecentPhotos(
         accessKey : String,
-        count : Int
+        count : Int,
+        page : Int
     ): NetworkState<List<RecentPhotoResponse>> {
-        return photoService.getRecentPhotos(accessKey, count)
+        return photoService.getRecentPhotos(accessKey, count, page)
     }
 
     override suspend fun getDetailPhoto(

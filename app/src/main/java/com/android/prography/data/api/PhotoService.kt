@@ -17,7 +17,8 @@ interface PhotoService {
     @GET("photos")
     suspend fun getRecentPhotos(
         @Query("client_id") clientId: String,
-        @Query("count") countIdx : Int
+        @Query("count") countIdx : Int,
+        @Query("page") page : Int,
     ): NetworkState<List<RecentPhotoResponse>>
 
     @GET("photos/{id}")
