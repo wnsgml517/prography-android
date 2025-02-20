@@ -1,8 +1,9 @@
 package com.android.prography.data.repository.remote.photo
 
 import com.android.prography.data.api.PhotoService
+import com.android.prography.data.entity.DetailPhotoResponse
 import com.android.prography.data.entity.PhotoResponse
-import com.android.prography.data.entity.RandomPhotoResponse
+import com.android.prography.data.entity.RecentPhotoResponse
 import com.android.prography.domain.util.NetworkState
 import javax.inject.Inject
 
@@ -19,7 +20,14 @@ class PhotoRemoteDataSourceImpl @Inject constructor(
     override suspend fun getRecentPhotos(
         accessKey : String,
         count : Int
-    ): NetworkState<List<RandomPhotoResponse>> {
+    ): NetworkState<List<RecentPhotoResponse>> {
         return photoService.getRecentPhotos(accessKey, count)
+    }
+
+    override suspend fun getDetailPhoto(
+        accessKey: String,
+        photoId: String
+    ): NetworkState<DetailPhotoResponse> {
+        return photoService.getDetailPhoto(photoId, accessKey)
     }
 }

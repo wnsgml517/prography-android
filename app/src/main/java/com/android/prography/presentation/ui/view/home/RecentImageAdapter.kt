@@ -5,27 +5,27 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.android.prography.data.entity.RandomPhotoResponse
+import com.android.prography.data.entity.RecentPhotoResponse
 import com.android.prography.databinding.ItemRecentImageBinding
 import com.android.prography.databinding.ItemRecentImageShimmerBinding
 import com.bumptech.glide.Glide
 
 class RecentImageAdapter :
-    ListAdapter<RandomPhotoResponse, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+    ListAdapter<RecentPhotoResponse, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     private var isLoading = true // ✅ 로딩 상태 추가
-    private var onItemClickListener: ((RandomPhotoResponse) -> Unit)? = null
+    private var onItemClickListener: ((RecentPhotoResponse) -> Unit)? = null
 
     companion object {
         private const val LOADING_VIEW_TYPE = 0
         private const val CONTENT_VIEW_TYPE = 1
 
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<RandomPhotoResponse>() {
-            override fun areItemsTheSame(oldItem: RandomPhotoResponse, newItem: RandomPhotoResponse): Boolean {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<RecentPhotoResponse>() {
+            override fun areItemsTheSame(oldItem: RecentPhotoResponse, newItem: RecentPhotoResponse): Boolean {
                 return oldItem.id == newItem.id
             }
 
-            override fun areContentsTheSame(oldItem: RandomPhotoResponse, newItem: RandomPhotoResponse): Boolean {
+            override fun areContentsTheSame(oldItem: RecentPhotoResponse, newItem: RecentPhotoResponse): Boolean {
                 return oldItem == newItem
             }
         }
@@ -56,7 +56,7 @@ class RecentImageAdapter :
         }
     }
 
-    fun setOnItemClickListener(listener: (RandomPhotoResponse) -> Unit) {
+    fun setOnItemClickListener(listener: (RecentPhotoResponse) -> Unit) {
         onItemClickListener = listener
     }
 
@@ -66,7 +66,7 @@ class RecentImageAdapter :
     // ✅ 실제 데이터 ViewHolder
     class ContentViewHolder(private val binding: ItemRecentImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: RandomPhotoResponse, clickListener: ((RandomPhotoResponse) -> Unit)?) {
+        fun bind(item: RecentPhotoResponse, clickListener: ((RecentPhotoResponse) -> Unit)?) {
             binding.tvTitle.text = item.title ?: "No Title"
 
             Glide.with(binding.root.context)
