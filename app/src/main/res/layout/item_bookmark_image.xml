@@ -7,8 +7,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_bookmark_image"
-        android:layout_width="166.5dp"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="128dp"
         app:cardCornerRadius="10dp"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -16,10 +16,10 @@
         app:layout_constraintTop_toTopOf="parent">
         <ImageView
             android:id="@+id/iv_bookmark_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="128dp"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             tools:src="@drawable/ic_home_black_24dp" />
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

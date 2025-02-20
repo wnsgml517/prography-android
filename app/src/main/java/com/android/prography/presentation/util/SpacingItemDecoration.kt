@@ -19,7 +19,7 @@ class SpacingItemDecoration(private val spacing: Int) : RecyclerView.ItemDecorat
         if (position == RecyclerView.NO_POSITION) return
 
         // ✅ 첫 번째 줄 아이템: 위쪽 간격을 0으로 설정
-        if (position < spanCount) {
+        if (position == spanCount) {
             outRect.top = 0
         } else {
             outRect.top = spacing // 나머지는 기본 간격 적용

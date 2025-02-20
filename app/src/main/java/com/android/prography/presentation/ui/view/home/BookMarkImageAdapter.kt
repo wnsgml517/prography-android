@@ -1,30 +1,44 @@
-package com.android.prography.presentation.ui.view.home
+package com.android.prography.presentation.ui.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.android.prography.R
+import com.android.prography.data.entity.PhotoResponse
+import com.android.prography.databinding.ItemBookmarkImageBinding
 import com.bumptech.glide.Glide
 
-class BookMarkImageAdapter(private val itemList: List<ImageItem>) :
-    RecyclerView.Adapter<BookMarkImageAdapter.ViewHolder>() {
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: ImageView = view.findViewById(R.id.iv_bookmark_image)
+class BookMarkImageAdapter : ListAdapter<PhotoResponse, BookMarkImageAdapter.BookmarkViewHolder>(
+    DIFF_CALLBACK
+) {
+    class BookmarkViewHolder(private val binding: ItemBookmarkImageBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(photo: PhotoResponse) {
+            Glide.with(binding.ivBookmarkImage.context)
+                .load(photo.imageUrls.regular)
+                .into(binding.ivBookmarkImage)
+        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_bookmark_image, parent, false)
-        return ViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkViewHolder {
+        val binding = ItemBookmarkImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return BookmarkViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = itemList[position]
-        Glide.with(holder.itemView.context).load(item.imageUrl).into(holder.imageView)
+    override fun onBindViewHolder(holder: BookmarkViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int = itemList.size
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<PhotoResponse>() {
+            override fun areItemsTheSame(oldItem: PhotoResponse, newItem: PhotoResponse): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: PhotoResponse, newItem: PhotoResponse): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
 }
