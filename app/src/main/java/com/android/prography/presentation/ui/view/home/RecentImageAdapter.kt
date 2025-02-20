@@ -1,20 +1,34 @@
 package com.android.prography.presentation.ui.view.home
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.android.prography.data.entity.RandomPhotoResponse
 import com.android.prography.databinding.ItemRecentImageBinding
 import com.android.prography.databinding.ItemRecentImageShimmerBinding
 import com.bumptech.glide.Glide
 
-class RecentImageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RecentImageAdapter :
+    ListAdapter<RandomPhotoResponse, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
-    private var itemList: List<RandomPhotoResponse> = emptyList()
     private var isLoading = true // ✅ 로딩 상태 추가
+    private var onItemClickListener: ((RandomPhotoResponse) -> Unit)? = null
 
     companion object {
         private const val LOADING_VIEW_TYPE = 0
         private const val CONTENT_VIEW_TYPE = 1
+
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<RandomPhotoResponse>() {
+            override fun areItemsTheSame(oldItem: RandomPhotoResponse, newItem: RandomPhotoResponse): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: RandomPhotoResponse, newItem: RandomPhotoResponse): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
 
     fun setLoadingState(isLoading: Boolean) {
@@ -38,29 +52,30 @@ class RecentImageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ContentViewHolder) {
-            holder.bind(itemList[position])
+            holder.bind(getItem(position), onItemClickListener)
         }
     }
 
-    override fun getItemCount(): Int = if (isLoading) 10 else itemList.size // ✅ 로딩 중에는 가짜 10개 아이템 표시
-
-    fun submitList(newList: List<RandomPhotoResponse>) {
-        itemList = newList
-        isLoading = false // ✅ 데이터 로딩 완료 시 Shimmer 제거
-        notifyDataSetChanged()
+    fun setOnItemClickListener(listener: (RandomPhotoResponse) -> Unit) {
+        onItemClickListener = listener
     }
 
     // ✅ Shimmer ViewHolder
     class ShimmerViewHolder(binding: ItemRecentImageShimmerBinding) : RecyclerView.ViewHolder(binding.root)
 
     // ✅ 실제 데이터 ViewHolder
-    class ContentViewHolder(private val binding: ItemRecentImageBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: RandomPhotoResponse) {
+    class ContentViewHolder(private val binding: ItemRecentImageBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: RandomPhotoResponse, clickListener: ((RandomPhotoResponse) -> Unit)?) {
             binding.tvTitle.text = item.title ?: "No Title"
 
             Glide.with(binding.root.context)
                 .load(item.imageUrls.small)
                 .into(binding.rvRecentImage)
+
+            binding.root.setOnClickListener {
+                clickListener?.invoke(item)
+            }
         }
     }
 }

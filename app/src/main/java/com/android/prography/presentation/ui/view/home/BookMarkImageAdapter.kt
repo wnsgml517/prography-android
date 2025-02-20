@@ -12,12 +12,18 @@ import com.bumptech.glide.Glide
 class BookMarkImageAdapter : ListAdapter<PhotoResponse, BookMarkImageAdapter.BookmarkViewHolder>(
     DIFF_CALLBACK
 ) {
+    private var onItemClickListener: ((PhotoResponse) -> Unit)? = null
+
     class BookmarkViewHolder(private val binding: ItemBookmarkImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(photo: PhotoResponse) {
+        fun bind(photo: PhotoResponse, clickListener: ((PhotoResponse) -> Unit)?) {
             Glide.with(binding.ivBookmarkImage.context)
                 .load(photo.imageUrls.regular)
                 .into(binding.ivBookmarkImage)
+
+            binding.root.setOnClickListener {
+                clickListener?.invoke(photo)
+            }
         }
     }
 
@@ -27,7 +33,11 @@ class BookMarkImageAdapter : ListAdapter<PhotoResponse, BookMarkImageAdapter.Boo
     }
 
     override fun onBindViewHolder(holder: BookmarkViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onItemClickListener)
+    }
+
+    fun setOnItemClickListener(listener: (PhotoResponse) -> Unit) {
+        onItemClickListener = listener
     }
 
     companion object {

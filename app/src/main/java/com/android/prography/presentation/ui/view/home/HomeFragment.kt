@@ -1,8 +1,10 @@
 package com.android.prography.presentation.ui.view.home
 
 import android.os.Bundle
+import android.text.Layout.Directions
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.android.prography.data.entity.ImageUrls
@@ -30,6 +32,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 
         initRecentImage()
         initBookmarkImage()
+        setItemClickListener()
     }
 
     private fun initRecentImage() {
@@ -52,8 +55,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
         viewModel.photos.observe(viewLifecycleOwner) { photos ->
             Timber.i("photo : $photos")
 
+            // ✅ 데이터 로딩 완료 시 Shimmer 제거
+            recentImageAdapter.setLoadingState(false)
             if (photos.isNotEmpty()) {
-                recentImageAdapter.submitList(photos) // ✅ 데이터 로딩 완료 시 Shimmer 제거
+                recentImageAdapter.submitList(photos)
             }
         }
     }
@@ -86,5 +91,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
                 }
             }
         }
+    }
+    private fun setItemClickListener() {
+        // ✅ 최신 이미지 클릭 시 Detail 화면으로 이동
+        recentImageAdapter.setOnItemClickListener { photo ->
+            goToDetailFragment(photo.id, photo.imageUrls.regular)
+        }
+        // ✅ 북마크 클릭 시 Detail 화면으로 이동
+        bookmarkImageAdapter.setOnItemClickListener { photo ->
+            goToDetailFragment(photo.id, photo.imageUrls.regular)
+        }
+    }
+
+    // ✅ 공통으로 DetailFragment 이동 메서드
+    private fun goToDetailFragment(id: String, imageUrl: String) {
+        val action = HomeFragmentDirections.actionNavigationHomeToNavigationDetail(
+            id = id,
+            url = imageUrl
+        )
+        findNavController().navigate(action)
     }
 }
