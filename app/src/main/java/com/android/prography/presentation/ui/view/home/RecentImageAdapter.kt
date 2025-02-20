@@ -16,6 +16,14 @@ class RecentImageAdapter :
     private var isLoading = true // ✅ 로딩 상태 추가
     private var onItemClickListener: ((RecentPhotoResponse) -> Unit)? = null
 
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return getItem(position).id.hashCode().toLong() + position // ✅ **포지션을 추가해 중복 방지**
+    }
+
     companion object {
         private const val LOADING_VIEW_TYPE = 0
         private const val CONTENT_VIEW_TYPE = 1

@@ -1,55 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.ui.view.home.HomeFragment" >
+    tools:context=".presentation.ui.view.home.HomeFragment">
 
-    <TextView
-        android:id="@+id/tv_bookmark"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Theme.Prography.Title"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="10dp"
-        android:text="북마크"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_bookmark"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:overScrollMode="never"
-        android:scrollbars="none"
-        android:fadeScrollbars="true"
-        android:paddingTop="12dp"
-        android:paddingHorizontal="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_bookmark" />
-
-    <TextView
-        android:id="@+id/tv_recent_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="최신 이미지"
-        style="@style/Theme.Prography.Title"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="10dp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rv_bookmark" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_recent_image"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/sc_main_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:fadeScrollbars="true"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="12dp"
-        android:scrollbars="none"
-        android:overScrollMode="never"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_recent_image" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_bookmark"
+                style="@style/Theme.Prography.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:text="북마크"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_bookmark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fadeScrollbars="true"
+                android:overScrollMode="never"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="12dp"
+                android:scrollbars="none"
+                app:layout_constraintTop_toBottomOf="@+id/tv_bookmark" />
+
+            <TextView
+                android:id="@+id/tv_recent_image"
+                style="@style/Theme.Prography.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:text="최신 이미지"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rv_bookmark" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_recent_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fadeScrollbars="true"
+                android:overScrollMode="never"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="12dp"
+                android:scrollbars="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_recent_image" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="22dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rv_recent_image">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottieLoader"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:lottie_autoPlay="false"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/loading_bar" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
