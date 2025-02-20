@@ -1,4 +1,5 @@
 package com.android.prography.presentation.ui.view.random
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -11,7 +12,6 @@ import com.bumptech.glide.Glide
 class RandomPhotoAdapter : ListAdapter<PhotoResponse, RandomPhotoAdapter.PhotoViewHolder>(
     DIFF_CALLBACK
 ) {
-
     class PhotoViewHolder(private val binding: ItemRandomPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(photo: PhotoResponse) {
@@ -27,17 +27,17 @@ class RandomPhotoAdapter : ListAdapter<PhotoResponse, RandomPhotoAdapter.PhotoVi
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-        holder.bind(getItem(position)) // getItem() 사용
+        holder.bind(getItem(position))
     }
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<PhotoResponse>() {
             override fun areItemsTheSame(oldItem: PhotoResponse, newItem: PhotoResponse): Boolean {
-                return oldItem.id == newItem.id // ID가 같은지 비교
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(oldItem: PhotoResponse, newItem: PhotoResponse): Boolean {
-                return oldItem == newItem // 내용이 같은지 비교
+                return oldItem == newItem
             }
         }
     }

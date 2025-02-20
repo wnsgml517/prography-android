@@ -9,8 +9,8 @@
     android:layout_marginBottom="44dp"
     tools:context=".presentation.ui.view.random.RandomPhotoFragment" >
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_random_view"
+    <com.yuyakaido.android.cardstackview.CardStackView
+        android:id="@+id/cv_random_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="24dp"
