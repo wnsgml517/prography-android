@@ -58,14 +58,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
             initInfiniteScroll()
         }
 
+
         // ✅ 초기 로딩 시 Shimmer 활성화
         recentImageAdapter.setLoadingState(true)
 
         viewModel.photos.observe(viewLifecycleOwner) { photos ->
             Timber.i("photo : $photos")
 
-            // ✅ 데이터 로딩 완료 시 Shimmer 제거, 로딩바 제거
-            recentImageAdapter.setLoadingState(false)
             stopLoading()
 
             if (photos.isNotEmpty()) {
@@ -164,6 +163,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 
     // ✅ 로딩 종료 (애니메이션 정지)
     fun stopLoading() = with(binding) {
+        recentImageAdapter.setLoadingState(false) // ✅ 데이터 로딩 완료 시 Shimmer 제거
         lottieLoader.cancelAnimation() // 애니메이션 멈춤
         clLoadingBar.visibility = View.GONE // 숨김
         lock = false
