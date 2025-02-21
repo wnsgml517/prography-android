@@ -12,28 +12,18 @@ class SpacingItemDecoration(private val spacing: Int) : RecyclerView.ItemDecorat
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        val position = parent.getChildAdapterPosition(view) // 현재 아이템 위치
-        val layoutManager = parent.layoutManager as? StaggeredGridLayoutManager
-        val spanCount = layoutManager?.spanCount ?: 2 // 열 개수 (기본 2)
-
+        val position = parent.getChildAdapterPosition(view)
         if (position == RecyclerView.NO_POSITION) return
 
-        // ✅ 첫 번째 줄 아이템: 위쪽 간격을 0으로 설정
-        if (position == spanCount) {
-            outRect.top = 0
-        } else {
-            outRect.top = spacing // 나머지는 기본 간격 적용
-        }
+        val layoutParams = view.layoutParams as? StaggeredGridLayoutManager.LayoutParams
+        val spanIndex = layoutParams?.spanIndex ?: 0 // ✅ 현재 아이템이 몇 번째 열(Span)에 있는지 확인
 
-        outRect.bottom = spacing // ✅ 모든 아이템에 아래 간격 추가
+        outRect.bottom = spacing // ✅ 모든 아이템 아래 간격 추가
 
-        // ✅ 첫 번째 열 아이템은 왼쪽 여백 없음
-        if (position % spanCount == 0) {
+        if (spanIndex == 0) { // ✅ 첫 번째 열
             outRect.left = 0
             outRect.right = spacing / 2
-        }
-        // ✅ 마지막 열 아이템은 오른쪽 여백 없음
-        else {
+        } else { // ✅ 두 번째 열
             outRect.left = spacing / 2
             outRect.right = 0
         }
