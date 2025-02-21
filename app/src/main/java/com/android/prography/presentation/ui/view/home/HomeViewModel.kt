@@ -13,6 +13,7 @@ import com.android.prography.presentation.ui.base.BaseViewModel
 import com.android.prography.presentation.ui.ext.parseErrorMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -64,6 +65,8 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             getRecentImageUseCase(accessToken, 10, _currentPage.value ?: 1).onSuccess { newPhotos ->
+
+                delay(1000) // 1초 로딩 시간
                 val updatedList = _photos.value.orEmpty() + newPhotos // ✅ 기존 데이터에 새 데이터 추가
                 _photos.postValue(updatedList)
                 _currentPage.postValue((_currentPage.value ?: 1) + 1) // ✅ 페이지 증가

@@ -21,7 +21,7 @@ class RecentImageAdapter :
     }
 
     override fun getItemId(position: Int): Long {
-        return getItem(position).id.hashCode().toLong() + position // ✅ **포지션을 추가해 중복 방지**
+        return getItem(position).id.hashCode().toLong()
     }
 
     companion object {

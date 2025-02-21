@@ -13,6 +13,7 @@ import com.android.prography.data.entity.PhotoResponse
 import com.android.prography.databinding.FragmentHomeBinding
 import com.android.prography.presentation.ui.adapter.BookMarkImageAdapter
 import com.android.prography.presentation.ui.base.BaseFragment
+import com.android.prography.presentation.ui.ext.DpToPx
 import com.android.prography.presentation.util.HorizontalSpaceItemDecoration
 import com.android.prography.presentation.util.SpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +30,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 ) {
     private lateinit var recentImageAdapter: RecentImageAdapter
     private lateinit var bookmarkImageAdapter: BookMarkImageAdapter
+    private var lock : Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,14 +44,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
         recentImageAdapter = RecentImageAdapter()
 
         binding.rvRecentImage.apply {
-            setHasFixedSize(true)
+            setHasFixedSize(false)
+            isNestedScrollingEnabled = false
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
                 gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE // ✅ 간격 문제 해결
             }
             adapter = recentImageAdapter
 
             // ✅ 수정된 간격 적용 (위/아래/왼쪽/오른쪽 균등)
-            addItemDecoration(SpacingItemDecoration(10))
+            addItemDecoration(SpacingItemDecoration(10.DpToPx()))
 
             // ✅ 무한 스크롤 리스너 적용
             initInfiniteScroll()
@@ -61,13 +64,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
         viewModel.photos.observe(viewLifecycleOwner) { photos ->
             Timber.i("photo : $photos")
 
-            // ✅ 데이터 로딩 완료 시 Shimmer 제거
+            // ✅ 데이터 로딩 완료 시 Shimmer 제거, 로딩바 제거
             recentImageAdapter.setLoadingState(false)
+            stopLoading()
 
             if (photos.isNotEmpty()) {
                 val recyclerViewState = binding.rvRecentImage.layoutManager?.onSaveInstanceState()
                 recentImageAdapter.submitList(photos) {
                     binding.rvRecentImage.layoutManager?.onRestoreInstanceState(recyclerViewState)
+
+                    // ✅ StaggeredGridLayoutManager 강제 리레이아웃
+                    binding.rvRecentImage.post {
+                        binding.rvRecentImage.invalidateItemDecorations() // ✅ 간격 재조정
+                        binding.rvRecentImage.requestLayout() // ✅ 새로 배치
+                    }
                 }
             }
         }
@@ -78,16 +88,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
         bookmarkImageAdapter = BookMarkImageAdapter()
 
         binding.rvBookmark.apply {
+            isNestedScrollingEnabled = true
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = bookmarkImageAdapter
-            addItemDecoration(HorizontalSpaceItemDecoration(10))
+            addItemDecoration(HorizontalSpaceItemDecoration(10.DpToPx()))
         }
 
         // ViewModel에서 북마크된 이미지 수집
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.bookmarkedPhotos.collectLatest { photos ->
-                delay(1000) // 1초 로딩 시간
-                stopLoading()
                 Timber.i("북마크된 이미지: $photos")
 
                 if (photos.isNotEmpty()) {
@@ -98,8 +107,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
                 }
                 else
                 {
-                    binding.rvBookmark.visibility = View.GONE
-                    binding.tvBookmark.visibility = View.GONE
+                    Timber.i("불러올 이미지가 없습니다.")
                 }
             }
         }
@@ -132,33 +140,32 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 
                 if (dy <= 0) return // ✅ 위로 스크롤할 때는 무시
 
-                val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
-                val totalItemCount = layoutManager.itemCount
-                val visibleItemCount = layoutManager.childCount
-                val lastVisibleItems = layoutManager.findLastVisibleItemPositions(null) // ✅ 마지막으로 보이는 아이템 위치 가져오기
+                // ✅ 스크롤이 마지막 부분까지 갔는지 확인하는 로직
+                val recyclerViewHeight = recyclerView.height
+                val scrollExtent = recyclerView.computeVerticalScrollExtent() // 현재 보이는 RecyclerView 영역 크기
+                val scrollOffset = recyclerView.computeVerticalScrollOffset() // 스크롤된 거리
+                val scrollRange = recyclerView.computeVerticalScrollRange() // RecyclerView 전체 크기
 
-                startLoading()
-
-                if (lastVisibleItems.isNotEmpty()) {
-                    val lastVisibleItemPosition = lastVisibleItems.maxOrNull() ?: 0 // ✅ 가장 큰 값을 가져오기 (즉, 가장 아래쪽 아이템)
-
-                    // ✅ 마지막 아이템이 보이면 추가 데이터 요청
-                    if (!viewModel.isLoading.value!! && lastVisibleItemPosition >= totalItemCount - 2) {
-                        viewModel.fetchPhotos()
-                    }
+                // ✅ 더 이상 스크롤할 영역이 없을 때 새로운 데이터 요청
+                if (!lock && (scrollOffset + scrollExtent >= scrollRange - 10)) { // 💡 마지막 10px 여백까지 고려
+                    lock = true
+                    startLoading()
+                    viewModel.fetchPhotos()
                 }
             }
         })
     }
+
     // ✅ 로딩 시작 (애니메이션 실행)
     fun startLoading() = with(binding) {
-        lottieLoader.visibility = View.VISIBLE // 보이게 설정
+        clLoadingBar.visibility = View.VISIBLE // 보이게 설정
         lottieLoader.playAnimation() // 애니메이션 실행
     }
 
     // ✅ 로딩 종료 (애니메이션 정지)
     fun stopLoading() = with(binding) {
         lottieLoader.cancelAnimation() // 애니메이션 멈춤
-        lottieLoader.visibility = View.GONE // 숨김
+        clLoadingBar.visibility = View.GONE // 숨김
+        lock = false
     }
 }
