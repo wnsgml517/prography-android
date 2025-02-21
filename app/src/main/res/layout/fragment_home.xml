@@ -9,6 +9,23 @@
     android:scrollbars="none"
     tools:context=".presentation.ui.view.home.HomeFragment">
 
+    <ImageView
+        android:id="@+id/img_prography_logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="16dp"
+        android:src="@drawable/ic_prography_logo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view_under"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray30"
+        app:layout_constraintTop_toBottomOf="@id/img_prography_logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <TextView
         android:id="@+id/tv_bookmark"
         style="@style/Theme.Prography.Title"
@@ -18,7 +35,7 @@
         android:paddingVertical="10dp"
         android:text="북마크"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/img_prography_logo" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_bookmark"

@@ -31,12 +31,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         // 특정 프래그먼트에서 헤더와 네비게이션 뷰를 숨기기
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.navigation_detail) {
-                binding.imgPrographyLogo.visibility = View.GONE
-                binding.viewUnder.visibility = View.GONE
                 binding.navView.visibility = View.GONE
             } else {
-                binding.imgPrographyLogo.visibility = View.VISIBLE
-                binding.viewUnder.visibility = View.VISIBLE
                 binding.navView.visibility = View.VISIBLE
             }
         }

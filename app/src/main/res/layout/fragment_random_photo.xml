@@ -3,22 +3,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="28dp"
-    android:layout_marginBottom="44dp"
     tools:context=".presentation.ui.view.random.RandomPhotoFragment" >
+
 
     <com.yuyakaido.android.cardstackview.CardStackView
         android:id="@+id/cv_random_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingHorizontal="24dp"
-        android:clipToPadding="false"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="44dp"
+        android:layout_marginTop="28dp"
         android:clipChildren="false"
-        android:overScrollMode="never"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_prography_logo" />
 </androidx.constraintlayout.widget.ConstraintLayout>
