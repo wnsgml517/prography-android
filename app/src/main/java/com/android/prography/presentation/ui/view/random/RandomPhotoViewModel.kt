@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+import com.android.prography.BuildConfig.API_KEY
 @HiltViewModel
 class RandomPhotoViewModel @Inject constructor(
     private val bookmarkPhotoDao: BookmarkPhotoDao,
@@ -32,7 +33,6 @@ class RandomPhotoViewModel @Inject constructor(
     private val _countIdx = MutableLiveData(5) // 초기값 5 설정
     val countIdx: LiveData<Int> get() = _countIdx
 
-    private val accessToken = "QncuXcl9I8DrjBvou0gUTPcBwZIz6ZKSTBglJwv6uXY"
 
     private val _bookmarkedPhotos = MutableStateFlow<List<BookmarkPhoto>>(emptyList())
     val bookmarkedPhotos = _bookmarkedPhotos.asStateFlow()
@@ -54,7 +54,7 @@ class RandomPhotoViewModel @Inject constructor(
     fun fetchPhotos() {
         Timber.i("checking fetchPhotos")
         viewModelScope.launch(Dispatchers.IO) {
-            getRandomImageUseCase(accessToken, 5).onSuccess {
+            getRandomImageUseCase(API_KEY, 5).onSuccess {
                 _photos.postValue(it)
             }.onFailure {
                 baseEvent(Event.ShowToast(it.message.parseErrorMsg()))

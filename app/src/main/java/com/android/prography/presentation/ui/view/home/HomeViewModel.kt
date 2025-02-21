@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import com.android.prography.BuildConfig.API_KEY
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -39,7 +40,6 @@ class HomeViewModel @Inject constructor(
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
-    private val accessToken = "QncuXcl9I8DrjBvou0gUTPcBwZIz6ZKSTBglJwv6uXY"
 
     private val _bookmarkedPhotos = MutableStateFlow<List<BookmarkPhoto>>(emptyList())
     val bookmarkedPhotos = _bookmarkedPhotos.asStateFlow()
@@ -65,7 +65,7 @@ class HomeViewModel @Inject constructor(
         Timber.i("fetchPhotos 호출: 페이지 $_currentPage")
 
         viewModelScope.launch(Dispatchers.IO) {
-            getRecentImageUseCase(accessToken, 10, _currentPage.value ?: 1).onSuccess { newPhotos ->
+            getRecentImageUseCase(API_KEY, 10, _currentPage.value ?: 1).onSuccess { newPhotos ->
 
                 delay(1000) // 1초 로딩 시간
                 val updatedList = _photos.value.orEmpty() + newPhotos // ✅ 기존 데이터에 새 데이터 추가

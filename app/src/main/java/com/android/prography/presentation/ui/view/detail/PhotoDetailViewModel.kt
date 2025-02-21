@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.android.prography.BuildConfig
 import com.android.prography.data.api.BookmarkPhotoDao
 import com.android.prography.data.entity.BookmarkPhoto
 import com.android.prography.data.entity.DetailPhotoResponse
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import com.android.prography.BuildConfig.API_KEY
 
 @HiltViewModel
 class PhotoDetailViewModel @Inject constructor(
@@ -44,7 +46,7 @@ class PhotoDetailViewModel @Inject constructor(
     private val _isBookMark = MutableLiveData<Boolean>()
     val isBookMark: LiveData<Boolean> = _isBookMark
 
-    private val accessToken = "QncuXcl9I8DrjBvou0gUTPcBwZIz6ZKSTBglJwv6uXY"
+    private val accessToken = ""
 
     init {
         fetchPhotoDetail()
@@ -68,7 +70,7 @@ class PhotoDetailViewModel @Inject constructor(
         Timber.i("checking fetchPhotoDetail")
 
         viewModelScope.launch(Dispatchers.IO) {
-            getDetailImageUseCase(accessToken, id.value ?: "").onSuccess {
+            getDetailImageUseCase(API_KEY, id.value ?: "").onSuccess {
                 _detailPhoto.postValue(it)
             }.onFailure {
                 baseEvent(Event.ShowToast(it.message.parseErrorMsg()))
