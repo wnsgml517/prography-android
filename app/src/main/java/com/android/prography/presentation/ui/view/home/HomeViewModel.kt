@@ -52,6 +52,7 @@ class HomeViewModel @Inject constructor(
     fun fetchBookmarks() {
         viewModelScope.launch {
             bookmarkPhotoDao.getAllBookmarks().collect { bookmarks ->
+                delay(1000)
                 _bookmarkedPhotos.value = bookmarks
             }
         }

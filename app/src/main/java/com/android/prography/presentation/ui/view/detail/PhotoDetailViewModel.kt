@@ -44,6 +44,8 @@ class PhotoDetailViewModel @Inject constructor(
     private val _isBookMark = MutableLiveData<Boolean>()
     val isBookMark: LiveData<Boolean> = _isBookMark
 
+    private val accessToken = "QncuXcl9I8DrjBvou0gUTPcBwZIz6ZKSTBglJwv6uXY"
+
     init {
         fetchPhotoDetail()
         fetchBookmarks()

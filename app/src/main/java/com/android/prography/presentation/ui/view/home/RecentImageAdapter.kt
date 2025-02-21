@@ -9,24 +9,15 @@ import com.android.prography.data.entity.RecentPhotoResponse
 import com.android.prography.databinding.ItemRecentImageBinding
 import com.android.prography.databinding.ItemRecentImageShimmerBinding
 import com.bumptech.glide.Glide
-
 class RecentImageAdapter :
     ListAdapter<RecentPhotoResponse, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
-    private var isLoading = true // ✅ 로딩 상태 추가
     private var onItemClickListener: ((RecentPhotoResponse) -> Unit)? = null
-
-    init {
-        setHasStableIds(true)
-    }
-
-    override fun getItemId(position: Int): Long {
-        return getItem(position).id.hashCode().toLong()
-    }
 
     companion object {
         private const val LOADING_VIEW_TYPE = 0
         private const val CONTENT_VIEW_TYPE = 1
+        private const val SHIMMER_COUNT = 10 // ✅ 쉬머 개수
 
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<RecentPhotoResponse>() {
             override fun areItemsTheSame(oldItem: RecentPhotoResponse, newItem: RecentPhotoResponse): Boolean {
@@ -39,13 +30,12 @@ class RecentImageAdapter :
         }
     }
 
-    fun setLoadingState(isLoading: Boolean) {
-        this.isLoading = isLoading
-        notifyDataSetChanged()
+    override fun getItemCount(): Int {
+        return if (currentList.isEmpty()) SHIMMER_COUNT else currentList.size // ✅ 리스트가 비어있으면 쉬머 표시
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (isLoading) LOADING_VIEW_TYPE else CONTENT_VIEW_TYPE
+        return if (currentList.isEmpty()) LOADING_VIEW_TYPE else CONTENT_VIEW_TYPE
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -59,7 +49,7 @@ class RecentImageAdapter :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is ContentViewHolder) {
+        if (holder is ContentViewHolder && currentList.isNotEmpty()) {
             holder.bind(getItem(position), onItemClickListener)
         }
     }

@@ -43,6 +43,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     private fun initRecentImage() {
         recentImageAdapter = RecentImageAdapter()
 
+        // 최신 이미지 초기 셋팅
         binding.rvRecentImage.apply {
             setHasFixedSize(false)
             isNestedScrollingEnabled = false
@@ -59,12 +60,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
         }
 
 
-        // ✅ 초기 로딩 시 Shimmer 활성화
-        recentImageAdapter.setLoadingState(true)
-
+        // 최신 이미지 읽어옴
         viewModel.photos.observe(viewLifecycleOwner) { photos ->
             Timber.i("photo : $photos")
-
             stopLoading()
 
             if (photos.isNotEmpty()) {
@@ -80,8 +78,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
                 }
             }
         }
-    }
 
+    }
 
     private fun initBookmarkImage() {
         bookmarkImageAdapter = BookMarkImageAdapter()
@@ -137,7 +135,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                if (dy <= 0) return // ✅ 위로 스크롤할 때는 무시
+                if (dy <= 0 || lock) return // ✅ 위로 스크롤할 때는 무시
 
                 // ✅ 스크롤이 마지막 부분까지 갔는지 확인하는 로직
                 val recyclerViewHeight = recyclerView.height
@@ -146,7 +144,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
                 val scrollRange = recyclerView.computeVerticalScrollRange() // RecyclerView 전체 크기
 
                 // ✅ 더 이상 스크롤할 영역이 없을 때 새로운 데이터 요청
-                if (!lock && (scrollOffset + scrollExtent >= scrollRange - 10)) { // 💡 마지막 10px 여백까지 고려
+                if (scrollOffset + scrollExtent >= scrollRange - 10) { // 💡 마지막 10px 여백까지 고려
                     lock = true
                     startLoading()
                     viewModel.fetchPhotos()
@@ -163,7 +161,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 
     // ✅ 로딩 종료 (애니메이션 정지)
     fun stopLoading() = with(binding) {
-        recentImageAdapter.setLoadingState(false) // ✅ 데이터 로딩 완료 시 Shimmer 제거
         lottieLoader.cancelAnimation() // 애니메이션 멈춤
         clLoadingBar.visibility = View.GONE // 숨김
         lock = false
