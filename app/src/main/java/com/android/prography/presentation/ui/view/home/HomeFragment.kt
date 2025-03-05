@@ -5,15 +5,18 @@ import android.text.Layout.Directions
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.android.prography.data.entity.ImageUrls
 import com.android.prography.data.entity.PhotoResponse
+import com.android.prography.data.entity.RecentPhotoResponse
 import com.android.prography.databinding.FragmentHomeBinding
 import com.android.prography.presentation.ui.adapter.BookMarkImageAdapter
 import com.android.prography.presentation.ui.base.BaseFragment
 import com.android.prography.presentation.ui.ext.DpToPx
+import com.android.prography.presentation.ui.view.home.recentImage.LoadingStateAdapter
 import com.android.prography.presentation.util.HorizontalSpaceItemDecoration
 import com.android.prography.presentation.util.SpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,42 +46,36 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     private fun initRecentImage() {
         recentImageAdapter = RecentImageAdapter()
 
-        // 최신 이미지 초기 셋팅
         binding.rvRecentImage.apply {
             setHasFixedSize(false)
-            isNestedScrollingEnabled = false
-            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
-                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE // ✅ 간격 문제 해결
+
+            // ✅ 처음에는 빈 데이터 10개 표시
+            val emptyList = List(10) { RecentPhotoResponse("","", ImageUrls("", "")) }
+            lifecycleScope.launch {
+                recentImageAdapter.submitData(PagingData.from(emptyList))
             }
-            adapter = recentImageAdapter
 
             // ✅ 수정된 간격 적용 (위/아래/왼쪽/오른쪽 균등)
             addItemDecoration(SpacingItemDecoration(10.DpToPx()))
 
-            // ✅ 무한 스크롤 리스너 적용
-            initInfiniteScroll()
+            // ✅ Lottie 로딩바 적용
+            adapter = recentImageAdapter.withLoadStateFooter(
+                footer = LoadingStateAdapter { recentImageAdapter.retry() }
+            )
+
+            // ✅ 간격 조정
+            layoutManager =
+                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
+                    gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+                }
         }
 
-
-        // 최신 이미지 읽어옴
-        viewModel.photos.observe(viewLifecycleOwner) { photos ->
-            Timber.i("photo : $photos")
-            stopLoading()
-
-            if (photos.isNotEmpty()) {
-                val recyclerViewState = binding.rvRecentImage.layoutManager?.onSaveInstanceState()
-                recentImageAdapter.submitList(photos) {
-                    binding.rvRecentImage.layoutManager?.onRestoreInstanceState(recyclerViewState)
-
-                    // ✅ StaggeredGridLayoutManager 강제 리레이아웃
-                    binding.rvRecentImage.post {
-                        binding.rvRecentImage.invalidateItemDecorations() // ✅ 간격 재조정
-                        binding.rvRecentImage.requestLayout() // ✅ 새로 배치
-                    }
-                }
+        // ✅ 페이징 데이터 바인딩
+        lifecycleScope.launch {
+            viewModel.recentPhotosFlow.collectLatest { pagingData ->
+                recentImageAdapter.submitData(pagingData)
             }
         }
-
     }
 
     private fun initBookmarkImage() {
@@ -109,6 +106,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
             }
         }
     }
+
     private fun setItemClickListener() {
         // ✅ 최신 이미지 클릭 시 Detail 화면으로 이동
         recentImageAdapter.setOnItemClickListener { photo ->
@@ -128,41 +126,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
             regularUrl = imageUrl.regular
         )
         findNavController().navigate(action)
-    }
-
-    private fun initInfiniteScroll() {
-        binding.rvRecentImage.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                if (dy <= 0 || lock) return // ✅ 위로 스크롤할 때는 무시
-
-                // ✅ 스크롤이 마지막 부분까지 갔는지 확인하는 로직
-                val recyclerViewHeight = recyclerView.height
-                val scrollExtent = recyclerView.computeVerticalScrollExtent() // 현재 보이는 RecyclerView 영역 크기
-                val scrollOffset = recyclerView.computeVerticalScrollOffset() // 스크롤된 거리
-                val scrollRange = recyclerView.computeVerticalScrollRange() // RecyclerView 전체 크기
-
-                // ✅ 더 이상 스크롤할 영역이 없을 때 새로운 데이터 요청
-                if (scrollOffset + scrollExtent >= scrollRange - 10) { // 💡 마지막 10px 여백까지 고려
-                    lock = true
-                    startLoading()
-                    viewModel.fetchPhotos()
-                }
-            }
-        })
-    }
-
-    // ✅ 로딩 시작 (애니메이션 실행)
-    fun startLoading() = with(binding) {
-        clLoadingBar.visibility = View.VISIBLE // 보이게 설정
-        lottieLoader.playAnimation() // 애니메이션 실행
-    }
-
-    // ✅ 로딩 종료 (애니메이션 정지)
-    fun stopLoading() = with(binding) {
-        lottieLoader.cancelAnimation() // 애니메이션 멈춤
-        clLoadingBar.visibility = View.GONE // 숨김
-        lock = false
     }
 }

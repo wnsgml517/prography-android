@@ -90,6 +90,14 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
 
+    // paging
+    implementation(libs.paging.runtime)
+    testImplementation(libs.paging.common)
+    implementation(libs.paging.rxjava2)
+    implementation(libs.paging.rxjava3)
+    implementation(libs.paging.guava)
+    implementation(libs.paging.compose)
+
     ksp(libs.hilt.compiler)
     ksp(libs.glide.compiler)
     ksp(libs.room.compiler)

@@ -2,6 +2,7 @@ package com.android.prography.presentation.ui.view.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -9,33 +10,17 @@ import com.android.prography.data.entity.RecentPhotoResponse
 import com.android.prography.databinding.ItemRecentImageBinding
 import com.android.prography.databinding.ItemRecentImageShimmerBinding
 import com.bumptech.glide.Glide
+
 class RecentImageAdapter :
-    ListAdapter<RecentPhotoResponse, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+    PagingDataAdapter<RecentPhotoResponse, RecyclerView.ViewHolder>(RecentDiffCallback()) {
+
+    private val ITEM_VIEW_TYPE = 0
+    private val LOADING_VIEW_TYPE = 1
 
     private var onItemClickListener: ((RecentPhotoResponse) -> Unit)? = null
 
-    companion object {
-        private const val LOADING_VIEW_TYPE = 0
-        private const val CONTENT_VIEW_TYPE = 1
-        private const val SHIMMER_COUNT = 10 // ✅ 쉬머 개수
-
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<RecentPhotoResponse>() {
-            override fun areItemsTheSame(oldItem: RecentPhotoResponse, newItem: RecentPhotoResponse): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-            override fun areContentsTheSame(oldItem: RecentPhotoResponse, newItem: RecentPhotoResponse): Boolean {
-                return oldItem == newItem
-            }
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return if (currentList.isEmpty()) SHIMMER_COUNT else currentList.size // ✅ 리스트가 비어있으면 쉬머 표시
-    }
-
     override fun getItemViewType(position: Int): Int {
-        return if (currentList.isEmpty()) LOADING_VIEW_TYPE else CONTENT_VIEW_TYPE
+        return if (snapshot().items.get(0).id.isBlank()) LOADING_VIEW_TYPE else ITEM_VIEW_TYPE
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -49,8 +34,8 @@ class RecentImageAdapter :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is ContentViewHolder && currentList.isNotEmpty()) {
-            holder.bind(getItem(position), onItemClickListener)
+        if (holder is ContentViewHolder && snapshot().items.get(0).id.isNotBlank()) {
+            getItem(position)?.let { holder.bind(it, onItemClickListener) }
         }
     }
 
@@ -75,5 +60,22 @@ class RecentImageAdapter :
                 clickListener?.invoke(item)
             }
         }
+    }
+}
+
+// DiffCallback 설정 (데이터 변경 감지)
+class RecentDiffCallback : DiffUtil.ItemCallback<RecentPhotoResponse>() {
+    override fun areItemsTheSame(
+        oldItem: RecentPhotoResponse,
+        newItem: RecentPhotoResponse
+    ): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(
+        oldItem: RecentPhotoResponse,
+        newItem: RecentPhotoResponse
+    ): Boolean {
+        return oldItem == newItem
     }
 }

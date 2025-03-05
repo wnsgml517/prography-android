@@ -3,6 +3,9 @@ package com.android.prography.presentation.ui.view.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.android.prography.data.api.BookmarkPhotoDao
 import com.android.prography.data.entity.BookmarkPhoto
 import com.android.prography.data.entity.ImageUrls
@@ -20,6 +23,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import com.android.prography.BuildConfig.API_KEY
+import com.android.prography.presentation.ui.view.home.recentImage.RecentImagePagingSource
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -44,8 +48,14 @@ class HomeViewModel @Inject constructor(
     private val _bookmarkedPhotos = MutableStateFlow<List<BookmarkPhoto>>(emptyList())
     val bookmarkedPhotos = _bookmarkedPhotos.asStateFlow()
 
+
+    val recentPhotosFlow = Pager(
+        config = PagingConfig(pageSize = 10), // 한 페이지당 10개
+        pagingSourceFactory = { RecentImagePagingSource(getRecentImageUseCase) }
+    ).flow.cachedIn(viewModelScope) // ✅ ViewModel 내에서 캐싱하여 최적화
+
     init {
-        fetchPhotos()
+        //fetchPhotos()
         fetchBookmarks()
     }
 
@@ -62,7 +72,7 @@ class HomeViewModel @Inject constructor(
         if (_isLoading.value == true) return // ✅ 이미 로딩 중이면 추가 요청 방지
         _isLoading.value = true
 
-        Timber.i("fetchPhotos 호출: 페이지 $_currentPage")
+        Timber.i("fetchPhotos 호출: 페이지 ${_currentPage.value}")
 
         viewModelScope.launch(Dispatchers.IO) {
             getRecentImageUseCase(API_KEY, 10, _currentPage.value ?: 1).onSuccess { newPhotos ->
