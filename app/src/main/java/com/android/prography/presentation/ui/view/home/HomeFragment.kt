@@ -5,6 +5,7 @@ import android.text.Layout.Directions
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ import com.android.prography.presentation.ui.adapter.BookMarkImageAdapter
 import com.android.prography.presentation.ui.base.BaseFragment
 import com.android.prography.presentation.ui.ext.DpToPx
 import com.android.prography.presentation.ui.view.home.recentImage.LoadingStateAdapter
+import com.android.prography.presentation.ui.view.home.recentImage.ShimmerAdapter
 import com.android.prography.presentation.util.HorizontalSpaceItemDecoration
 import com.android.prography.presentation.util.SpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,6 +33,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     FragmentHomeBinding::inflate,
     HomeViewModel::class.java
 ) {
+
+    private lateinit var shimmerAdapter: ShimmerAdapter
     private lateinit var recentImageAdapter: RecentImageAdapter
     private lateinit var bookmarkImageAdapter: BookMarkImageAdapter
     private var lock : Boolean = false
@@ -38,9 +42,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initSkeletonImage()
         initRecentImage()
         initBookmarkImage()
         setItemClickListener()
+    }
+
+    private fun initSkeletonImage()
+    {
+        shimmerAdapter = ShimmerAdapter()
+
+        binding.rvShimmerView.apply {
+            setHasFixedSize(false)
+            addItemDecoration(SpacingItemDecoration(10.DpToPx()))
+
+            // ✅ 초기에는 ShimmerAdapter 연결
+            adapter = shimmerAdapter
+
+            layoutManager =
+                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
+                    gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+                }
+        }
+
     }
 
     private fun initRecentImage() {
@@ -48,14 +72,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 
         binding.rvRecentImage.apply {
             setHasFixedSize(false)
-
-            // ✅ 처음에는 빈 데이터 10개 표시
-            val emptyList = List(10) { RecentPhotoResponse("","", ImageUrls("", "")) }
-            lifecycleScope.launch {
-                recentImageAdapter.submitData(PagingData.from(emptyList))
-            }
-
-            // ✅ 수정된 간격 적용 (위/아래/왼쪽/오른쪽 균등)
             addItemDecoration(SpacingItemDecoration(10.DpToPx()))
 
             // ✅ Lottie 로딩바 적용
@@ -63,7 +79,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
                 footer = LoadingStateAdapter { recentImageAdapter.retry() }
             )
 
-            // ✅ 간격 조정
             layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
                     gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
@@ -73,10 +88,38 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
         // ✅ 페이징 데이터 바인딩
         lifecycleScope.launch {
             viewModel.recentPhotosFlow.collectLatest { pagingData ->
+                val layoutManager = binding.rvRecentImage.layoutManager as StaggeredGridLayoutManager
+
+                // ✅ 기존 스크롤 위치 저장
+                val previousPosition = layoutManager.findFirstVisibleItemPositions(null)
+
                 recentImageAdapter.submitData(pagingData)
+
+                // ✅ 기존 배치를 유지하면서 새로운 데이터 추가
+                layoutManager.invalidateSpanAssignments()
+
+                // ✅ 기존 위치 유지 (스크롤을 리셋하지 않도록 설정)
+                if (previousPosition.isNotEmpty()) {
+                    binding.rvRecentImage.scrollToPosition(previousPosition[0])
+                }
+            }
+        }
+
+        // ✅ 데이터 로딩 상태 감지해서 부드럽게 전환 & Shimmer 종료
+        lifecycleScope.launch {
+            recentImageAdapter.loadStateFlow.collectLatest { loadStates ->
+                val isLoading = loadStates.refresh is LoadState.Loading || loadStates.append is LoadState.Loading
+                if (!isLoading) {
+                    // ✅ 1. Shimmer 애니메이션 멈추기
+                    binding.rvShimmerView.adapter = null
+
+                    // ✅ 2. ShimmerView GONE 처리
+                    binding.rvShimmerView.visibility = View.GONE
+                }
             }
         }
     }
+
 
     private fun initBookmarkImage() {
         bookmarkImageAdapter = BookMarkImageAdapter()
@@ -101,6 +144,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
                 }
                 else
                 {
+                    binding.tvBookmark.visibility = View.GONE
                     Timber.i("불러올 이미지가 없습니다.")
                 }
             }

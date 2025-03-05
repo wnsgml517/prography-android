@@ -19,6 +19,7 @@ class RecentImagePagingSource(
 
             response.fold(
                 onSuccess = { photos ->
+                    delay(2000)
                     LoadResult.Page(
                         data = photos, // 가져온 데이터
                         prevKey = if (page == 1) null else page - 1, // 이전 페이지 (첫 페이지면 null)

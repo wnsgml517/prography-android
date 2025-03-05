@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.airbnb.lottie.LottieAnimationView
 import com.android.prography.R
 
@@ -22,6 +23,12 @@ class LoadingStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<Load
             holder.showLoading()
         } else {
             holder.hideLoading()
+        }
+
+        // ✅ StaggeredGridLayoutManager에서 전체 span을 차지하도록 설정
+        val layoutParams = holder.itemView.layoutParams
+        if (layoutParams is StaggeredGridLayoutManager.LayoutParams) {
+            layoutParams.isFullSpan = true // ✅ 전체 너비 사용
         }
     }
 

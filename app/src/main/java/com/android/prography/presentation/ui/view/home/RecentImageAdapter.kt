@@ -14,27 +14,15 @@ import com.bumptech.glide.Glide
 class RecentImageAdapter :
     PagingDataAdapter<RecentPhotoResponse, RecyclerView.ViewHolder>(RecentDiffCallback()) {
 
-    private val ITEM_VIEW_TYPE = 0
-    private val LOADING_VIEW_TYPE = 1
-
     private var onItemClickListener: ((RecentPhotoResponse) -> Unit)? = null
 
-    override fun getItemViewType(position: Int): Int {
-        return if (snapshot().items.get(0).id.isBlank()) LOADING_VIEW_TYPE else ITEM_VIEW_TYPE
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == LOADING_VIEW_TYPE) {
-            val binding = ItemRecentImageShimmerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            ShimmerViewHolder(binding)
-        } else {
-            val binding = ItemRecentImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            ContentViewHolder(binding)
-        }
+        val binding = ItemRecentImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ContentViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is ContentViewHolder && snapshot().items.get(0).id.isNotBlank()) {
+        if (holder is ContentViewHolder) {
             getItem(position)?.let { holder.bind(it, onItemClickListener) }
         }
     }
