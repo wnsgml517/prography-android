@@ -109,15 +109,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
         }
 
         // ✅ 데이터 로딩 상태 감지해서 부드럽게 전환 & Shimmer 종료
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             recentImageAdapter.loadStateFlow.collectLatest { loadStates ->
                 val isLoading = loadStates.refresh is LoadState.Loading || loadStates.append is LoadState.Loading
                 if (!isLoading) {
+
                     // ✅ 1. Shimmer 애니메이션 멈추기
                     binding.rvShimmerView.adapter = null
-
                     // ✅ 2. ShimmerView GONE 처리
                     binding.rvShimmerView.visibility = View.GONE
+
                 }
             }
         }
@@ -155,9 +156,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 
                     // 데이터가 있을 경우, 스켈레톤 뷰 2초(예시) 와 북마크 text 표시
                     binding.tvBookmark.visibility = View.VISIBLE
+
                     initBookmarkSkeletonImage()
                     delay(2000)
-
                     // ✅ 1. Shimmer 애니메이션 멈추기
                     binding.rvShimmerBookmark.adapter = null
 
