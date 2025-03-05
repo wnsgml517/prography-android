@@ -1,24 +1,21 @@
 package com.android.prography.presentation.ui.view.home
 
 import android.os.Bundle
-import android.text.Layout.Directions
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.android.prography.data.entity.ImageUrls
 import com.android.prography.data.entity.PhotoResponse
-import com.android.prography.data.entity.RecentPhotoResponse
 import com.android.prography.databinding.FragmentHomeBinding
 import com.android.prography.presentation.ui.adapter.BookMarkImageAdapter
 import com.android.prography.presentation.ui.base.BaseFragment
 import com.android.prography.presentation.ui.ext.DpToPx
+import com.android.prography.presentation.ui.view.home.bookmark.ShimmerBookMarkAdapter
 import com.android.prography.presentation.ui.view.home.recentImage.LoadingStateAdapter
-import com.android.prography.presentation.ui.view.home.recentImage.ShimmerAdapter
+import com.android.prography.presentation.ui.view.home.recentImage.ShimmerRecentImageAdapter
 import com.android.prography.presentation.util.HorizontalSpaceItemDecoration
 import com.android.prography.presentation.util.SpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +23,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.math.log
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
@@ -34,7 +30,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     HomeViewModel::class.java
 ) {
 
-    private lateinit var shimmerAdapter: ShimmerAdapter
+    private lateinit var shimmerBookMarkAdapter: ShimmerBookMarkAdapter
+    private lateinit var shimmerRecentImageAdapter: ShimmerRecentImageAdapter
     private lateinit var recentImageAdapter: RecentImageAdapter
     private lateinit var bookmarkImageAdapter: BookMarkImageAdapter
     private var lock : Boolean = false
@@ -42,22 +39,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initSkeletonImage()
+        // shimmerView 보이기
+        initRecentImageSkeletonImage()
+
+        // 아이템뷰 초기화
         initRecentImage()
         initBookmarkImage()
+
+        // 클릭 리스너
         setItemClickListener()
     }
 
-    private fun initSkeletonImage()
+    private fun initRecentImageSkeletonImage()
     {
-        shimmerAdapter = ShimmerAdapter()
+        // 최신 이미지
+        shimmerRecentImageAdapter = ShimmerRecentImageAdapter()
 
         binding.rvShimmerView.apply {
             setHasFixedSize(false)
             addItemDecoration(SpacingItemDecoration(10.DpToPx()))
 
             // ✅ 초기에는 ShimmerAdapter 연결
-            adapter = shimmerAdapter
+            adapter = shimmerRecentImageAdapter
 
             layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
@@ -120,7 +123,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
         }
     }
 
+    private fun initBookmarkSkeletonImage()
+    {
+        // 최신 이미지
+        shimmerBookMarkAdapter = ShimmerBookMarkAdapter()
 
+        binding.rvShimmerBookmark.apply {
+            isNestedScrollingEnabled = true
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = shimmerBookMarkAdapter
+            addItemDecoration(HorizontalSpaceItemDecoration(10.DpToPx()))
+        }
+
+    }
     private fun initBookmarkImage() {
         bookmarkImageAdapter = BookMarkImageAdapter()
 
@@ -137,6 +152,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
                 Timber.i("북마크된 이미지: $photos")
 
                 if (photos.isNotEmpty()) {
+
+                    // 데이터가 있을 경우, 스켈레톤 뷰 2초(예시) 와 북마크 text 표시
+                    binding.tvBookmark.visibility = View.VISIBLE
+                    initBookmarkSkeletonImage()
+                    delay(2000)
+
+                    // ✅ 1. Shimmer 애니메이션 멈추기
+                    binding.rvShimmerBookmark.adapter = null
+
+                    // ✅ 2. ShimmerView GONE 처리
+                    binding.rvShimmerBookmark.visibility = View.GONE
+
+                    // ✅ 3. 북마크 이미지 보여주기
                     val convertedList = photos.map { bookmark ->
                         PhotoResponse(id = bookmark.id, imageUrls = ImageUrls(bookmark.imageUrl.small, bookmark.imageUrl.regular))
                     }
