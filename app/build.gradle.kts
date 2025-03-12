@@ -115,8 +115,10 @@ dependencies {
     implementation(libs.compose.tooling)
     debugImplementation(libs.debug.compose.tooling)
 
-    // Compose ViewModel (ViewModel 연동)
+    // Compose 라이브러리
     implementation(libs.compose.viewmodel)
+    implementation(libs.compose.glide)
+    implementation(libs.glide.okhttp3)
 
 
     ksp(libs.hilt.compiler)

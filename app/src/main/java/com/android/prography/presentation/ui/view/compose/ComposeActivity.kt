@@ -11,28 +11,41 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.android.prography.data.entity.PhotoResponse
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.compose.ui.theme.MyApplicationTheme
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ComposeActivity : ComponentActivity() {
@@ -49,20 +62,11 @@ class ComposeActivity : ComponentActivity() {
 
 @Composable
 fun TopLevel(viewModel: ToDoViewModel = hiltViewModel()) {
-    Column {
-        TodoInput(text = viewModel.text.value, onSubmit = viewModel.onSubmit, onTextChange = {
-            viewModel.text.value = it
-        })
-        LazyColumn {
-            items(viewModel.toDoList) {
-                Todo(
-                    toDoData = it,
-                    onToggle = viewModel.onToggle,
-                    onDelete = viewModel.onDelete,
-                    onEdit = viewModel.onEdit
-                )
-            }
-        }
+
+    // 최신 이미지 값 가져옴.
+    val photos by viewModel.photos.collectAsState()
+    Surface(modifier = Modifier.fillMaxSize()){
+        PhotoList(photos = photos)
     }
 }
 
@@ -164,6 +168,27 @@ fun TodoInputPreview() {
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun PhotoList(photos: List<PhotoResponse>) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp) // ✅ 아이템 간 간격 설정
+    ) {
+        items(photos) { photo ->
+            var imageRatio by remember { mutableStateOf(1f) } // ✅ 기본 비율 (1:1)
+
+            GlideImage(
+                model = photo.imageUrls.small,
+                contentDescription = "Loaded Image",
+                modifier = Modifier
+                    .height(150.dp) // ✅ 높이만 고정
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(16.dp))
+            )
+        }
+    }
+}
 
 data class ToDoData(
     val key: Int, val text: String, val done: Boolean = false
