@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.navigation.safeargs)
+    alias(libs.plugins.compose.compiler)
 
     kotlin("plugin.serialization") version "2.1.10"
     id("com.google.devtools.ksp")
@@ -48,9 +49,14 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        compose = true
         buildConfig = true
         viewBinding = true
     }
+}
+
+composeCompiler {
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
 }
 
 dependencies {
@@ -81,7 +87,9 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.serialization)
+
     implementation(libs.hilt.android)
+    implementation(libs.hilt.compose)
 
     implementation(libs.timber)
     implementation(libs.androidx.databinding.runtime)
@@ -97,6 +105,19 @@ dependencies {
     implementation(libs.paging.rxjava3)
     implementation(libs.paging.guava)
     implementation(libs.paging.compose)
+
+    // Compose BOM (최신 버전 자동 적용)
+    implementation(platform(libs.compose.bom))
+
+    // Compose Core
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.tooling)
+    debugImplementation(libs.debug.compose.tooling)
+
+    // Compose ViewModel (ViewModel 연동)
+    implementation(libs.compose.viewmodel)
+
 
     ksp(libs.hilt.compiler)
     ksp(libs.glide.compiler)

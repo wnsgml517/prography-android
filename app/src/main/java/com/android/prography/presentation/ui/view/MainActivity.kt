@@ -1,13 +1,12 @@
-package com.android.prography
+package com.android.prography.presentation.ui.view
 
-import android.os.Bundle
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.android.prography.R
 import com.android.prography.databinding.ActivityMainBinding
 import com.android.prography.presentation.ui.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
