@@ -15,6 +15,7 @@ import com.android.prography.presentation.ui.base.BaseViewModel
 import com.android.prography.presentation.ui.ext.parseErrorMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -82,10 +83,13 @@ class ToDoViewModel @Inject constructor(
 
     fun fetchPhotos() {
         Timber.i("checking fetchPhotos")
+        baseEvent(Event.ShowLoading) // ✅ 로딩 시작
         viewModelScope.launch(Dispatchers.IO) {
-
             getRandomImageUseCase(API_KEY, 5).onSuccess {
                 _photos.value = it
+                delay(2000)
+                baseEvent(Event.ShowToast("성공입니다!!"))
+                baseEvent(Event.HideLoading)
             }.onFailure {
                 baseEvent(Event.ShowToast(it.message.parseErrorMsg()))
             }

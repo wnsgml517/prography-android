@@ -1,30 +1,12 @@
 package com.android.prography.presentation.ui.base
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
-import android.content.res.Configuration
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.Surface
-import android.view.View
-import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDialog
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,27 +21,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.prography.R
 import com.android.prography.presentation.ui.view.MainActivity
-import com.android.prography.presentation.ui.view.compose.DefaultPreview
-import com.android.prography.presentation.ui.view.compose.PhotoList
-import com.android.prography.presentation.ui.view.compose.ToDoViewModel
-import com.android.prography.presentation.ui.view.compose.TopLevel
 import com.example.compose.ui.theme.MyApplicationTheme
 import kotlinx.coroutines.flow.collectLatest
-import timber.log.Timber
 import java.lang.reflect.ParameterizedType
+import kotlin.reflect.KClass
 
 abstract class BaseComposeActivity<VM : BaseViewModel> : ComponentActivity() {
 
-    private val viewModelClass = ((javaClass.genericSuperclass as ParameterizedType?)
+/*    private val viewModelClass = ((javaClass.genericSuperclass as ParameterizedType?)
         ?.actualTypeArguments
         ?.get(1) as Class<VM>).kotlin
 
@@ -68,18 +40,11 @@ abstract class BaseComposeActivity<VM : BaseViewModel> : ComponentActivity() {
         { viewModelStore },
         { defaultViewModelProviderFactory },
         { defaultViewModelCreationExtras },
-    )
+    )*/
 
     private var showLoading by mutableStateOf(false)
-/*
-    private val loadingDialog by lazy {
-        AppCompatDialog(this).apply {
-            setContentView(R.layout.item_progress_loading)
-            setCancelable(false)
-            window?.setDimAmount(0.7f)
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        }
-    }*/
+    private var toastMessage by mutableStateOf<String?>(null) // ✅ 일반 토스트 상태
+    private var successToastMessage by mutableStateOf<String?>(null) // ✅ 성공 토스트 상태
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,38 +54,57 @@ abstract class BaseComposeActivity<VM : BaseViewModel> : ComponentActivity() {
 
     private fun setupUi() {
         setContent {
-            MyApplicationTheme{
-                BasePreview()
+            enableEdgeToEdge()
+            MyApplicationTheme {
+                TopSurface()
             }
         }
     }
 
-
+    // ✅ UI를 제공하는 Composable 함수
     @Composable
-    abstract fun ProvideUI()
+    abstract fun ProvideUI(viewModel: VM)
 
-    @Composable
-    private fun handleEvent(context: Activity, event: BaseViewModel.Event) {
+    // ✅ 이벤트를 감지하고 상태를 변경
+    private fun handleEvent(event: BaseViewModel.Event) {
         when (event) {
             is BaseViewModel.Event.ShowToast -> {
-                ToastMessage(event.message)
+                toastMessage = event.message
             }
             is BaseViewModel.Event.ShowToastRes -> {
-                ToastMessage(context.getString(event.message))
+                toastMessage = getString(event.message)
             }
             is BaseViewModel.Event.ShowSuccessToast -> {
-                SuccessToastMessage(event.message)
+                successToastMessage = event.message
             }
             is BaseViewModel.Event.ShowSuccessToastRes -> {
-                SuccessToastMessage(context.getString(event.message))
+                successToastMessage = getString(event.message)
             }
-            is BaseViewModel.Event.ShowLoading -> showLoadingDialog()
-            is BaseViewModel.Event.HideLoading -> dismissLoadingDialog()
+            is BaseViewModel.Event.ShowLoading -> showLoading = true
+            is BaseViewModel.Event.HideLoading -> showLoading = false
             is BaseViewModel.Event.ExpiredToken -> {
-                context.startActivity(Intent(context, MainActivity::class.java))
-                context.finishAffinity()
+                startActivity(Intent(this, MainActivity::class.java))
+                finishAffinity()
             }
             else -> {}
+        }
+    }
+
+    @Composable
+    fun ObserveToastMessages() {
+        val context = LocalContext.current
+        toastMessage?.let { message ->
+            LaunchedEffect(message) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                toastMessage = null // ✅ 한 번 표시 후 상태 초기화
+            }
+        }
+
+        successToastMessage?.let { message ->
+            LaunchedEffect(message) {
+                Toast.makeText(context, "✅ $message", Toast.LENGTH_SHORT).show()
+                successToastMessage = null // ✅ 한 번 표시 후 상태 초기화
+            }
         }
     }
 
@@ -129,64 +113,32 @@ abstract class BaseComposeActivity<VM : BaseViewModel> : ComponentActivity() {
         LoadingDialog(showDialog = showLoading)
     }
 
-    fun showLoadingDialog() {
-        showLoading = true
-    }
+    // Method to get the VM class type
+    abstract fun getViewModelClass(): KClass<VM>
 
-    fun dismissLoadingDialog() {
-        showLoading = false
-    }
-
-    // 상태바 색상 설정 함수
-    protected fun setStatusBarColor(color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = color
-        }
-    }
+    // ✅ 상태를 감지하는 TopSurface
     @Composable
-    fun TopSurface(vm: ViewModel = hiltViewModel()) {
-        // 여기서 vm을 viewModel값으로 설정하고 싶다는...
+    fun TopSurface() {
+
+        val viewModelType = getViewModelClass()
+        val viewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+            modelClass = viewModelType.java
+        ) as VM
 
         val context = LocalContext.current as Activity
-        val eventFlow = viewModel.baseEventFlow.collectAsState()
+        val eventFlow by viewModel.baseEventFlow.collectAsState()
 
-
-        Surface(modifier = Modifier.fillMaxSize()){
-            LaunchedEffect(eventFlow.value) {
-                viewModel.baseEventFlow.collectLatest { event ->
-                    handleEvent(context, event)
-                }
+        LaunchedEffect(eventFlow) {
+            viewModel.baseEventFlow.collectLatest { event ->
+                handleEvent(event)
             }
+        }
 
+        Surface(modifier = Modifier.fillMaxSize()) {
+            ObserveToastMessages()
             ObserveLoadingState()
-            ProvideUI()
+            ProvideUI(viewModel)
         }
-    }
-
-    @Preview(showBackground = true)
-    @Composable
-    fun BasePreview() {
-        MyApplicationTheme {
-            TopSurface()
-        }
-    }
-}
-
-
-@Composable
-fun ToastMessage(message: String) {
-    val context = LocalContext.current
-    LaunchedEffect(message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-    }
-}
-
-
-@Composable
-fun SuccessToastMessage(message: String) {
-    val context = LocalContext.current
-    LaunchedEffect(message) {
-        Toast.makeText(context, "✅ $message", Toast.LENGTH_SHORT).show()
     }
 }
 
