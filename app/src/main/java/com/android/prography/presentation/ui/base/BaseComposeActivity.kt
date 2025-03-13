@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelLazy
 import com.android.prography.presentation.ui.view.MainActivity
 import com.example.compose.ui.theme.MyApplicationTheme
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KClass
 
@@ -91,8 +92,7 @@ abstract class BaseComposeActivity<VM : BaseViewModel> : ComponentActivity() {
     }
 
     @Composable
-    fun ObserveToastMessages() {
-        val context = LocalContext.current
+    fun ObserveToastMessages(context: Activity = LocalContext.current as Activity) {
         toastMessage?.let { message ->
             LaunchedEffect(message) {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -135,7 +135,7 @@ abstract class BaseComposeActivity<VM : BaseViewModel> : ComponentActivity() {
         }
 
         Surface(modifier = Modifier.fillMaxSize()) {
-            ObserveToastMessages()
+            ObserveToastMessages(context)
             ObserveLoadingState()
             ProvideUI(viewModel)
         }

@@ -87,9 +87,9 @@ class ToDoViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             getRandomImageUseCase(API_KEY, 5).onSuccess {
                 _photos.value = it
-                delay(2000)
-                baseEvent(Event.ShowToast("성공입니다!!"))
+                delay(1000)
                 baseEvent(Event.HideLoading)
+                baseEvent(Event.ShowToast("성공입니다!!"))
             }.onFailure {
                 baseEvent(Event.ShowToast(it.message.parseErrorMsg()))
             }

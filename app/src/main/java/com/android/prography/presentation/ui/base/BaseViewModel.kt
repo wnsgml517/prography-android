@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.prography.presentation.util.MutableEventFlow
 import com.android.prography.presentation.util.asEventFlow
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -14,7 +15,7 @@ abstract class BaseViewModel : ViewModel() {
     val baseEventFlow = _baseEventFlow.asStateFlow()
 
     fun baseEvent(event: Event) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             _baseEventFlow.emit(event)
         }
     }
