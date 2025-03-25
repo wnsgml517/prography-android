@@ -11,6 +11,7 @@ import com.android.prography.BuildConfig.API_KEY
 import com.android.prography.data.entity.PhotoResponse
 import com.android.prography.domain.usecase.GetRandomImageUseCase
 import com.android.prography.domain.usecase.GetRecentImageUseCase
+import com.android.prography.presentation.ui.base.BaseComposeViewModel
 import com.android.prography.presentation.ui.base.BaseViewModel
 import com.android.prography.presentation.ui.ext.parseErrorMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +26,34 @@ import javax.inject.Inject
 @HiltViewModel
 class ToDoViewModel @Inject constructor(
     private val getRandomImageUseCase: GetRandomImageUseCase
-) : BaseViewModel() {
+) : BaseComposeViewModel() {
+
+    private val _photos = MutableStateFlow<List<PhotoResponse>>(emptyList())
+    val photos: StateFlow<List<PhotoResponse>> = _photos
+
+    init {
+        fetchPhotos()
+    }
+
+    fun fetchPhotos() {
+        // 글로벌 로딩 및 토스트 사용
+        showLoading()
+        viewModelScope.launch(Dispatchers.IO) {
+            getRandomImageUseCase(API_KEY, 5)
+                .onSuccess { result ->
+                    _photos.value = result
+                    delay(1000)
+                    hideLoading()
+                    showToast("성공입니다!!")
+                }
+                .onFailure { error ->
+                    hideLoading()
+                    showToast(error.message.parseErrorMsg())
+                }
+        }
+    }
+
+
     var text = mutableStateOf("")
     val toDoList = mutableStateListOf<ToDoData>()
     private var key = mutableIntStateOf(-1)
@@ -72,27 +100,5 @@ class ToDoViewModel @Inject constructor(
             it.key == key
         }
         toDoList[pos] = toDoList[pos].copy(text = text)
-    }
-
-    private val _photos = MutableStateFlow<List<PhotoResponse>>(emptyList())
-    val photos: StateFlow<List<PhotoResponse>> = _photos
-
-    init {
-        fetchPhotos()
-    }
-
-    fun fetchPhotos() {
-        Timber.i("checking fetchPhotos")
-        baseEvent(Event.ShowLoading) // ✅ 로딩 시작
-        viewModelScope.launch(Dispatchers.IO) {
-            getRandomImageUseCase(API_KEY, 5).onSuccess {
-                _photos.value = it
-                delay(1000)
-                baseEvent(Event.HideLoading)
-                baseEvent(Event.ShowToast("성공입니다!!"))
-            }.onFailure {
-                baseEvent(Event.ShowToast(it.message.parseErrorMsg()))
-            }
-        }
     }
 }

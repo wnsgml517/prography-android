@@ -119,6 +119,7 @@ dependencies {
     implementation(libs.compose.viewmodel)
     implementation(libs.compose.glide)
     implementation(libs.glide.okhttp3)
+    implementation(libs.compose.navigation)
 
 
     ksp(libs.hilt.compiler)

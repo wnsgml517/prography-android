@@ -40,7 +40,7 @@ compose-material3 = "1.2.1"
 compose-tooling = "1.6.6"
 compose-viewmodel = "2.7.0"
 compose-glide="1.0.0-beta01"
-
+compose-navigation="2.8.9"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -98,6 +98,7 @@ compose-tooling = { module = "androidx.compose.ui:ui-tooling-preview", version.r
 debug-compose-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-tooling" }
 compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "compose-viewmodel" }
 compose-glide = { module = "com.github.bumptech.glide:compose", version.ref= "compose-glide"}
+compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "compose-navigation"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
