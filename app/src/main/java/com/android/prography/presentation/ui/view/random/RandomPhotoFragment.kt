@@ -90,9 +90,9 @@ class RandomPhotoFragment : BaseFragment<FragmentRandomPhotoBinding, RandomPhoto
             swipeCard(Direction.Right)
         }
 
-        viewModel.photos.observe(viewLifecycleOwner) { photos ->
-            adapter.submitList(photos)
-        }
+//        viewModel.photos.observe(viewLifecycleOwner) { photos ->
+//            adapter.submitList(photos)
+//        }
 
         viewModel.fetchPhotos()
     }

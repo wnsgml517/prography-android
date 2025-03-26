@@ -58,13 +58,6 @@ class ComposeActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun RandomPhotoScreen(
-    onPhotoClick: (String, String, String) -> Unit
-) {
-    // 랜덤 포토 화면 구현
-
-}
 
 @Composable
 fun PhotoDetailScreen(

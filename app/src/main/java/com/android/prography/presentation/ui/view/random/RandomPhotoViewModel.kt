@@ -26,8 +26,8 @@ class RandomPhotoViewModel @Inject constructor(
     private val bookmarkPhotoDao: BookmarkPhotoDao,
     private val getRandomImageUseCase: GetRandomImageUseCase
 ): BaseViewModel() {
-    private val _photos = MutableLiveData<List<PhotoResponse>>(emptyList())
-    val photos: LiveData<List<PhotoResponse>> = _photos
+    private val _photos = MutableStateFlow<List<PhotoResponse>>(emptyList())
+    val photos: StateFlow<List<PhotoResponse>> = _photos
 
     // 랜덤 사진 읽어올 개수 (5개로 설정)
     private val _countIdx = MutableLiveData(5) // 초기값 5 설정
@@ -36,6 +36,10 @@ class RandomPhotoViewModel @Inject constructor(
 
     private val _bookmarkedPhotos = MutableStateFlow<List<BookmarkPhoto>>(emptyList())
     val bookmarkedPhotos = _bookmarkedPhotos.asStateFlow()
+
+    init {
+        fetchPhotos()
+    }
 
     fun bookmarkPhoto(photo: PhotoResponse) {
         viewModelScope.launch {
@@ -55,7 +59,7 @@ class RandomPhotoViewModel @Inject constructor(
         Timber.i("checking fetchPhotos")
         viewModelScope.launch(Dispatchers.IO) {
             getRandomImageUseCase(API_KEY, 5).onSuccess {
-                _photos.postValue(it)
+                _photos.emit(it)
             }.onFailure {
                 baseEvent(Event.ShowToast(it.message.parseErrorMsg()))
             }

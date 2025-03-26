@@ -83,6 +83,7 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.shimmer)
     implementation(libs.card.stack.view)
+    implementation(libs.siwpeable.cards)
     implementation(libs.lottie)
 
     implementation(libs.kotlinx.serialization.json)

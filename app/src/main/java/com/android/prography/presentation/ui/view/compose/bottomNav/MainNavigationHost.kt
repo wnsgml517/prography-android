@@ -2,14 +2,15 @@ package com.android.prography.presentation.ui.view.compose.bottomNav
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.android.prography.presentation.ui.view.compose.PhotoDetailScreen
-import com.android.prography.presentation.ui.view.compose.RandomPhotoScreen
 import com.android.prography.presentation.ui.view.compose.screen.HomeScreen
+import com.android.prography.presentation.ui.view.compose.screen.RandomPhotoScreen
 
 @Composable
 fun MainNavigationHost(
@@ -33,7 +34,7 @@ fun MainNavigationHost(
         // 랜덤 화면
         composable(BottomNavItem.Random.route) {
             RandomPhotoScreen(
-                onPhotoClick = { smallUrl, regularUrl, id ->
+                onPhotoInfoClick = { smallUrl, regularUrl, id ->
                     navController.navigate("detail/$smallUrl/$regularUrl/$id")
                 }
             )

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.0"
+agp = "8.7.3"
 kotlin = "2.0.21"
 serialization= "1.8.0"
 retrofit-serialization = "0.8.0"
@@ -33,6 +33,7 @@ databindingRuntime = "8.8.1"
 cardstackview = "2.3.4"
 shimmer ="0.5.0"
 lottie = "6.0.0"
+siwpeable-cards = "0.1.0"
 
 compose-bom = "2024.03.00" # 최신 BOM 버전
 compose-ui = "1.6.6"
@@ -76,6 +77,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 retrofit-serialization = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit-serialization" }
 
 card-stack-view = { group = "com.github.yuyakaido", name ="cardstackview", version.ref = "cardstackview"}
+siwpeable-cards =  { module = "com.alexstyl.swipeablecard:swipeablecard", version.ref = "siwpeable-cards"}
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer"}
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie"}
 
