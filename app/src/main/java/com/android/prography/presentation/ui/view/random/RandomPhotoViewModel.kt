@@ -63,6 +63,7 @@ class RandomPhotoViewModel @Inject constructor(
         showLoading()
         viewModelScope.launch(Dispatchers.IO) {
             getRandomImageUseCase(API_KEY, 5).onSuccess {
+                hideLoading()
                 showToast("성공!")
                 _photos.emit(it)
 

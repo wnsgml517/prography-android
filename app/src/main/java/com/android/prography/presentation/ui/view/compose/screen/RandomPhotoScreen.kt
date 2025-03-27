@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.prography.R
 import com.android.prography.data.entity.ImageUrls
 import com.android.prography.data.entity.PhotoResponse
+import com.android.prography.presentation.ui.view.compose.YourAppTheme
 import com.android.prography.presentation.ui.view.compose.components.SwipeDirection
 import com.android.prography.presentation.ui.view.compose.components.SwipeableCard
 import com.android.prography.presentation.ui.view.random.RandomPhotoViewModel
@@ -40,51 +41,53 @@ fun RandomPhotoScreen(
     val photos by viewModel.photos.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        // 프로그라피 로고
-        val prographyLogo = ImageVector.vectorResource(id = R.drawable.ic_prography_logo)
-        Image(
-            imageVector = prographyLogo,
-            contentDescription = "Prography Logo",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-        )
+    YourAppTheme {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // 프로그라피 로고
+            val prographyLogo = ImageVector.vectorResource(id = R.drawable.ic_prography_logo)
+            Image(
+                imageVector = prographyLogo,
+                contentDescription = "Prography Logo",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            )
 
-        // 구분선
-        Divider(color = Color.Gray.copy(alpha = 0.3f), thickness = 1.dp)
+            // 구분선
+            Divider(color = Color.Gray.copy(alpha = 0.3f), thickness = 1.dp)
 
-        // 카드 스택 영역
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp)
-                .padding(top = 28.dp, bottom = 44.dp)
-        ) {
-            if (photos.isNotEmpty()) {
-                CardStack(
-                    photos = photos,
-                    onSwipeLeft = { photo ->
-                        // 관심 없음 - 좌측 스와이프
-                    },
-                    onSwipeRight = { photo ->
-                        // 북마크 - 우측 스와이프
-                        viewModel.bookmarkPhoto(photo)
-                    },
-                    onInfoClick = { photo ->
-                        onPhotoInfoClick(
-                            photo.id,
-                            photo.imageUrls.small,
-                            photo.imageUrls.regular
-                        )
-                    },
-                    onBookmarkClick = { photo ->
-                        viewModel.bookmarkPhoto(photo)
-                    },
-                    onNotInterestedClick = { photo ->
-                        // 관심 없음 처리
-                    }
-                )
+            // 카드 스택 영역
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp)
+                    .padding(top = 28.dp, bottom = 44.dp)
+            ) {
+                if (photos.isNotEmpty()) {
+                    CardStack(
+                        photos = photos,
+                        onSwipeLeft = { photo ->
+                            // 관심 없음 - 좌측 스와이프
+                        },
+                        onSwipeRight = { photo ->
+                            // 북마크 - 우측 스와이프
+                            viewModel.bookmarkPhoto(photo)
+                        },
+                        onInfoClick = { photo ->
+                            onPhotoInfoClick(
+                                photo.id,
+                                photo.imageUrls.small,
+                                photo.imageUrls.regular
+                            )
+                        },
+                        onBookmarkClick = { photo ->
+                            viewModel.bookmarkPhoto(photo)
+                        },
+                        onNotInterestedClick = { photo ->
+                            // 관심 없음 처리
+                        }
+                    )
+                }
             }
         }
     }
