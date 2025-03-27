@@ -37,7 +37,7 @@ fun RandomPhotoScreen(
     viewModel: RandomPhotoViewModel = hiltViewModel(),
     onPhotoInfoClick: (String, String, String) -> Unit
 ) {
-    val photos by viewModel.photos.collectAsState(initial = emptyList())
+    val photos by viewModel.photos.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.fillMaxSize()) {

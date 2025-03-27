@@ -21,11 +21,14 @@ import timber.log.Timber
 import javax.inject.Inject
 
 import com.android.prography.BuildConfig.API_KEY
+import com.android.prography.presentation.ui.base.BaseComposeViewModel
+import kotlinx.coroutines.delay
+
 @HiltViewModel
 class RandomPhotoViewModel @Inject constructor(
     private val bookmarkPhotoDao: BookmarkPhotoDao,
     private val getRandomImageUseCase: GetRandomImageUseCase
-): BaseViewModel() {
+): BaseComposeViewModel() {
     private val _photos = MutableStateFlow<List<PhotoResponse>>(emptyList())
     val photos: StateFlow<List<PhotoResponse>> = _photos
 
@@ -57,11 +60,15 @@ class RandomPhotoViewModel @Inject constructor(
 
     fun fetchPhotos() {
         Timber.i("checking fetchPhotos")
+        showLoading()
         viewModelScope.launch(Dispatchers.IO) {
             getRandomImageUseCase(API_KEY, 5).onSuccess {
+                showToast("성공!")
                 _photos.emit(it)
+
             }.onFailure {
-                baseEvent(Event.ShowToast(it.message.parseErrorMsg()))
+                hideLoading()
+                showToast(it.message.parseErrorMsg())
             }
         }
     }
