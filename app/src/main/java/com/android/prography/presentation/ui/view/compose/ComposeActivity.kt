@@ -86,14 +86,13 @@ class ComposeActivity : ComponentActivity() {
         }
 
         when {
-            // 권한이 이미 있는 경우
-            ContextCompat.checkSelfPermission(this, permissionToCheck) ==
-                    PackageManager.PERMISSION_GRANTED -> {
-                // 스크린샷 전용 Activity 실행
+            ContextCompat.checkSelfPermission(
+                this,
+                permissionToCheck
+            ) == PackageManager.PERMISSION_GRANTED -> {
                 val intent = Intent(this, ScreenshotPickerActivity::class.java)
                 screenshotActivityLauncher.launch(intent)
             }
-            // 권한 요청이 필요한 경우
             else -> {
                 requestPermissionLauncher.launch(permissionToCheck)
             }
